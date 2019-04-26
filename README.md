@@ -1,0 +1,15 @@
+# etcdcc-apiserver
+#### What's this
+Restful/grpc service for config center base on etcd which's distributed,stable,high performance k/v store storage.
+this service generally serve etcdcc-ui
+
+#### How it works
+Receive http/grpc request,and save/del/update specific k/v record in etcd3
+
+#### Performace
+Hihgly depends on  etcd ,see how etcd proved it [here](https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/performance.md) ,
+100k write request / 50k qps,this's way beyond what we expected
+
+#### Run it
+##### By Docker
+##### Compile and run
