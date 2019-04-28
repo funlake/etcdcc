@@ -5,7 +5,8 @@ import (
 	"github.com/astaxie/beego/orm"
 	"time"
 )
-
+const MAXROWS  = 999999999
+const PAGEROWS  = 20
 type BaseModel struct{
 	CreatedTime time.Time `orm:"auto_now_add;type(datetime)" json:"created_time"`
 	UpdatedTime time.Time `orm:"auto_now;type(datetime)" json:"updated_time"`

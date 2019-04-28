@@ -1,3 +1,2 @@
 .idea/
-cmd/apiserver/apiserver
-apiserver
+./apiserver

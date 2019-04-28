@@ -5,7 +5,7 @@ import(
 	"os"
 	"strings"
 )
-const LOGTIMEFORMAT  = "2006-01-02 15:04:05"
+const LOGTIMEFORMAT = "2006-01-02 15:04:05"
 var log zerolog.Logger
 func init()  {
 	zerolog.CallerSkipFrameCount = 3
@@ -39,8 +39,8 @@ func init()  {
 	log = zerolog.New(output).With().Timestamp().Logger()
 
 }
-func Debug(msg string,fields ... map[string]interface{}){
-	log.Debug().Fields(fields[0]).Caller().Msg(msg)
+func Debug(msg string){
+	log.Debug().Caller().Msg(msg)
 }
 func Info(msg string){
 	log.Info().Caller().Msg(msg)
