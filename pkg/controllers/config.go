@@ -27,3 +27,15 @@ func (c *ConfigController) Create()  {
 	}
 	c.ok(id)
 }
+
+func (c *ConfigController) Update() {
+	cdto := &dto.ConfigEditDto{}
+	c.parseAndValidate(cdto)
+	service := services.Config{}
+	err := service.Update(cdto)
+	if err != nil{
+		c.fail(err.Error())
+		return
+	}
+	c.ok(nil)
+}

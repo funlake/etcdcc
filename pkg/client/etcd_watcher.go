@@ -3,8 +3,10 @@ package client
 import (
 	"context"
 	"etcdcc/apiserver/pkg/dao/adapter/etcd"
+	"etcdcc/apiserver/pkg/log"
 	"fmt"
 	"github.com/coreos/etcd/clientv3"
+	"github.com/funlake/gopkg/jobworker"
 	"sync"
 )
 
@@ -15,9 +17,13 @@ type EtcdClientWatcher struct {
 func (ecw *EtcdClientWatcher) KeepEyesOnKey(key string) {}
 
 func (ecw *EtcdClientWatcher)KeepEyesOnKeyWithPrefix(key string,prefix interface{}) {
-	etcdAdapter := etcd.Adapter{}
+	adapter := etcd.Adapter{}
+	worker := &SyncWorker{
+		dispatcher : jobworker.NewBlockingDispather(1,10),
+	}
 	ctx,cancel := context.WithCancel(context.Background())
-	for v := range etcdAdapter.GetMetaCacheHandler().GetStore().Watch(ctx,key,prefix.(clientv3.OpOption)){
+	log.Info(fmt.Sprintf("Watching key with %s",key))
+	for v := range adapter.GetMetaCacheHandler().GetStore().Watch(ctx,key,prefix.(clientv3.OpOption)){
 		if v.Err() != nil{
 			continue
 		}
@@ -34,6 +40,7 @@ func (ecw *EtcdClientWatcher)KeepEyesOnKeyWithPrefix(key string,prefix interface
 					ecw.configs.Delete(key)
 				}
 			}
+			worker.Do(ecw.configs)
 		}
 	}
 	cancel()

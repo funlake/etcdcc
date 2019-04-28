@@ -5,6 +5,6 @@ import (
 	"etcdcc/apiserver/cmd"
 )
 
-func main(){
+func main() {
 	cmd.Execute()
 }

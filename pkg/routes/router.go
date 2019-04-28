@@ -16,5 +16,6 @@ func init(){
 	//Route.POST("/config",configController.Create)
 	beego.Router("/config",configController,"get:List")
 	beego.Router("/config",configController,"post:Create")
+	beego.Router("/config",configController,"put:Update")
 	beego.Router("/config/:id",configController,"delete:Delete")
 }
