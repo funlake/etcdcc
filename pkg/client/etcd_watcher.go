@@ -19,7 +19,9 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKey(key string) {}
 func (ecw *EtcdClientWatcher)KeepEyesOnKeyWithPrefix(key string,prefix interface{}) {
 	adapter := etcd.Adapter{}
 	worker := &SyncWorker{
-		dispatcher : jobworker.NewBlockingDispather(1,10),
+		//big queue shared by single worker
+		//let things
+		dispatcher : jobworker.NewBlockingDispather(1,2000),
 	}
 	ctx,cancel := context.WithCancel(context.Background())
 	log.Info(fmt.Sprintf("Watching key with %s",key))
