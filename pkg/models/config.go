@@ -38,10 +38,11 @@ func (cc *CenterConfig) Create()(int64 ,error){
 		_ , err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), cc.Val)
 		if err != nil{
 			err = db.Rollback()
+		} else {
+			err = db.Commit()
 		}
-	}
-	if err == nil {
-		err = db.Commit()
+	} else {
+		err = db.Rollback()
 	}
 	return insertId,err
 }
@@ -53,10 +54,11 @@ func (cc *CenterConfig) Update() error{
 		_ , err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), cc.Val)
 		if err != nil{
 			err = db.Rollback()
+		} else {
+			err = db.Commit()
 		}
-	}
-	if err == nil {
-		err = db.Commit()
+	} else {
+		err = db.Rollback()
 	}
 	return err
 }
@@ -68,10 +70,11 @@ func (cc *CenterConfig) Delete() error {
 		_ , err = MetaCache.Delete(MetaCache{}, cc.formatEtcdKeys())
 		if err != nil{
 			err = db.Rollback()
+		} else {
+			err = db.Commit()
 		}
-	}
-	if err == nil {
-		err = db.Commit()
+	} else {
+		err = db.Rollback()
 	}
 	return err
 }
