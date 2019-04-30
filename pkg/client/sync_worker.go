@@ -15,7 +15,7 @@ import (
 )
 
 type SyncWorker struct {
-	storeDir	 string
+	storeDir     string
 	shmfile      string
 	timeout      int
 	retrySeconds int
@@ -30,16 +30,16 @@ type failConfig struct {
 }
 
 func (sw *SyncWorker) Do(configs sync.Map) {
-	memoryFile := "/dev/shm/"+sw.shmfile
-	mfs := strings.Split(sw.shmfile,"_")
-	modFile := mfs[len(mfs) - 1]
+	memoryFile := "/dev/shm/" + sw.shmfile
+	mfs := strings.Split(sw.shmfile, "_")
+	modFile := mfs[len(mfs)-1]
 	in := sw.dispatcher.Put(jobworker.NewSimpleJob(func() {
 		//1.Read and write
 		fh, err := os.OpenFile(memoryFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
 			log.Fatal("File not open correctly:" + err.Error())
 		}
-		fa := fileadapter.Json{File:fh}
+		fa := fileadapter.Json{File: fh}
 		err = fa.Save(configs)
 		defer func() {
 			err := fh.Close()
@@ -53,7 +53,7 @@ func (sw *SyncWorker) Do(configs sync.Map) {
 			err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+p)
 			if err == nil {
 				//3.Symlink
-				err = runCtxCommand("ln","-sfT", "/tmp/config_"+p, sw.storeDir+"/"+modFile+".json")
+				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+p, sw.storeDir+"/"+modFile+".json")
 				if err == nil {
 					sw.setLatestTime(time.Now())
 				}
@@ -90,7 +90,7 @@ func (sw *SyncWorker) retryFails() {
 	tm.SetInterval(sw.retrySeconds, func() {
 		if sw.failConfig != nil {
 			if sw.failConfig.t.After(sw.latestTime) {
-				log.Warn(fmt.Sprintf("Try to save configs fail to record last time : %v",sw.failConfig.c))
+				log.Warn(fmt.Sprintf("Try to save configs fail to record last time : %v", sw.failConfig.c))
 				sw.Do(sw.failConfig.c)
 			} else {
 				//discard,since configs already the newer one
@@ -100,7 +100,7 @@ func (sw *SyncWorker) retryFails() {
 	})
 }
 
-func runCtxCommand(commands ... string) error {
+func runCtxCommand(commands ...string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	cmd := exec.CommandContext(ctx, commands[0], commands[1:]...)
 	err := cmd.Run()

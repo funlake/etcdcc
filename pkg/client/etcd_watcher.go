@@ -15,32 +15,33 @@ import (
 type EtcdClientWatcher struct {
 	configs      sync.Map
 	RetrySeconds int
-	StoreDir string
+	StoreDir     string
 }
+
 func (ecw *EtcdClientWatcher) KeepEyesOnKey(key string) {}
 
 func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 	adapter := etcd.Adapter{}
-	storeDir := ecw.StoreDir + "/" + strings.Split(key,"/")[0]
+	storeDir := ecw.StoreDir + "/" + strings.Split(key, "/")[0]
 	err := os.Mkdir(storeDir, 0755)
-	if err != nil{
-		log.Error("Can not create directory for configuration files : "+ err.Error())
+	if err != nil {
+		log.Error("Can not create directory for configuration files : " + err.Error())
 		return
 	}
 	worker := &SyncWorker{
-		storeDir: storeDir,
-		shmfile:      strings.Replace(key,"/","_",-1),
+		storeDir:     storeDir,
+		shmfile:      strings.Replace(key, "/", "_", -1),
 		retrySeconds: ecw.RetrySeconds,
 		//big queue shared by single worker
-		dispatcher:   jobworker.NewBlockingDispather(1, 2000),
+		dispatcher: jobworker.NewBlockingDispather(1, 2000),
 	}
 	go worker.retryFails()
 	ctx, cancel := context.WithCancel(context.Background())
 	log.Info(fmt.Sprintf("Initialize configuration with %s", key))
-	allKeys,err := adapter.GetMetaCacheHandler().GetStore().Get(key+"/",clientv3.WithPrefix())
+	allKeys, err := adapter.GetMetaCacheHandler().GetStore().Get(key+"/", clientv3.WithPrefix())
 	if err == nil {
-		for _,e := range allKeys.(*clientv3.GetResponse).Kvs {
-			sk := strings.TrimLeft(string(e.Key),key)
+		for _, e := range allKeys.(*clientv3.GetResponse).Kvs {
+			sk := strings.TrimLeft(string(e.Key), key)
 			ecw.ModifyLocal(sk, string(e.Value))
 		}
 		worker.Do(ecw.configs)
@@ -57,7 +58,7 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 			tp := fmt.Sprintf("%v", e.Type)
 			switch tp {
 			case "PUT":
-				sk := strings.TrimLeft(string(e.Kv.Key),key)
+				sk := strings.TrimLeft(string(e.Kv.Key), key)
 				ecw.ModifyLocal(sk, string(e.Kv.Value))
 			case "DELETE":
 				if string(e.Kv.Key) == key {
