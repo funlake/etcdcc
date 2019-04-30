@@ -1,5 +1,7 @@
 package models
 
+import "etcdcc/apiserver/pkg/log"
+
 type CenterConfig struct {
 	Id  int    `json:"id"`
 	Env string `json:"env" orm:"column(env)"`
@@ -39,6 +41,7 @@ func (cc *CenterConfig) Create() (int64, error) {
 	if err == nil {
 		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), cc.Val)
 		if err != nil {
+			log.Error("Etcd put error:" + err.Error())
 			err = db.Rollback()
 		} else {
 			err = db.Commit()
@@ -55,6 +58,7 @@ func (cc *CenterConfig) Update() error {
 	if err == nil {
 		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), cc.Val)
 		if err != nil {
+			log.Error("Etcd put error:" + err.Error())
 			err = db.Rollback()
 		} else {
 			err = db.Commit()
@@ -71,6 +75,7 @@ func (cc *CenterConfig) Delete() error {
 	if err == nil {
 		_, err = MetaCache.Delete(MetaCache{}, cc.formatEtcdKeys())
 		if err != nil {
+			log.Error("Etcd del error:" + err.Error())
 			err = db.Rollback()
 		} else {
 			err = db.Commit()
