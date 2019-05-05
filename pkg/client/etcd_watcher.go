@@ -32,8 +32,8 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 		storeDir:     storeDir,
 		shmfile:      strings.Replace(key, "/", "_", -1),
 		retrySeconds: ecw.RetrySeconds,
-		//big queue shared by single worker
-		dispatcher: jobworker.NewBlockingDispather(1, 2000),
+		//Big queue shared with single worker
+		dispatcher: jobworker.NewBlockingDispather(1, 200),
 	}
 	go worker.retryFails()
 	ctx, cancel := context.WithCancel(context.Background())

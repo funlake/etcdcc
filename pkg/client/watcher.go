@@ -1,9 +1,9 @@
 package client
 
-// todo
-// 1. 开一个定时器,定时同步最新配置,做成启动配置
-// 2. 同步器用job worker异步阻塞模式，只开一个工作协程，避免写锁
-// 3. ...
+// @Summary
+// 1. 同步器用job worker异步阻塞模式，只开一个工作协程，避免写锁,协程panic重启由类库自动实现
+// 2. 定时重试
+// 3. 只兼容linux,一些命令用linux原生执行(通用后期再考虑)
 type Watcher interface {
 	KeepEyesOnKey(key string)
 	KeepEyesOnKeyWithPrefix(key string, prefix interface{})

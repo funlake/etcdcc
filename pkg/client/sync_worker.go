@@ -39,8 +39,9 @@ func (sw *SyncWorker) Do(configs sync.Map) {
 		if err != nil {
 			log.Fatal("File not open correctly:" + err.Error())
 		}
-		fa := fileadapter.Json{File: fh}
-		err = fa.Save(configs)
+		//fa := fileadapter.Json{File: fh}
+		//err = fa.Save(configs)
+		err = sw.setConfigContent("json",fh,configs)
 		defer func() {
 			err := fh.Close()
 			if err != nil {
@@ -82,6 +83,15 @@ func (sw *SyncWorker) setFailConfig(configs sync.Map) {
 		t: time.Now(),
 		c: configs,
 	}
+}
+func (sw *SyncWorker) setConfigContent(adapter string,fh *os.File,configs sync.Map) error{
+	switch adapter {
+	case "json":
+	default:
+		fa := fileadapter.Json{File: fh}
+		return fa.Save(configs)
+	}
+	return nil
 }
 
 func (sw *SyncWorker) retryFails() {
