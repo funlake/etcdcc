@@ -41,7 +41,7 @@ func (sw *SyncWorker) Do(configs sync.Map) {
 		}
 		//fa := fileadapter.Json{File: fh}
 		//err = fa.Save(configs)
-		err = sw.setConfigContent("json",fh,configs)
+		err = sw.setConfigContent("yaml",fh,configs)
 		defer func() {
 			err := fh.Close()
 			if err != nil {
@@ -54,7 +54,7 @@ func (sw *SyncWorker) Do(configs sync.Map) {
 			err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+p)
 			if err == nil {
 				//3.Symlink
-				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+p, sw.storeDir+"/"+modFile+".json")
+				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+p, sw.storeDir+"/"+modFile+".yaml")
 				if err == nil {
 					sw.setLatestTime(time.Now())
 				}
@@ -89,6 +89,9 @@ func (sw *SyncWorker) setConfigContent(adapter string,fh *os.File,configs sync.M
 	case "json":
 	default:
 		fa := fileadapter.Json{File: fh}
+		return fa.Save(configs)
+	case "yaml":
+		fa := fileadapter.Yaml{File: fh}
 		return fa.Save(configs)
 	}
 	return nil

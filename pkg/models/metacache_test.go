@@ -16,12 +16,12 @@ func initConnect() {
 }
 func TestEtcdService_Get(t *testing.T) {
 	initConnect()
-	r, err := metaTestModel.Get("dev/gateway/proxy/access_token")
+	r, err := metaTestModel.Get("dev/act/act.conf")
 	if err != nil {
 		t.Log(err.Error())
 	} else {
 		t.Log(r)
-		Watch()
+		//Watch()
 	}
 }
 
@@ -38,15 +38,15 @@ func Watch() {
 	}
 }
 
-func TestEtcdService_Put(t *testing.T) {
-	initConnect()
-	_, err := metaTestModel.Put("foo/hello", "hello world")
-	if err != nil {
-		t.Error(err.Error())
-	} else {
-		t.Log("Set ok!")
-	}
-}
+//func TestEtcdService_Put(t *testing.T) {
+//	initConnect()
+//	_, err := metaTestModel.Put("foo/hello", "hello world")
+//	if err != nil {
+//		t.Error(err.Error())
+//	} else {
+//		t.Log("Set ok!")
+//	}
+//}
 func BenchmarkEtcdService_Get(b *testing.B) {
 	initConnect()
 	b.SetParallelism(10)

@@ -38,6 +38,7 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 	go worker.retryFails()
 	ctx, cancel := context.WithCancel(context.Background())
 	log.Info(fmt.Sprintf("Initialize configuration with %s", key))
+	//Initialize all configurations under mod
 	allKeys, err := adapter.GetMetaCacheHandler().GetStore().Get(key+"/", clientv3.WithPrefix())
 	if err == nil {
 		for _, e := range allKeys.(*clientv3.GetResponse).Kvs {
@@ -50,6 +51,7 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 		return
 	}
 	log.Info(fmt.Sprintf("Watching key with %s", key))
+	//Watching mod's configurations
 	for v := range adapter.GetMetaCacheHandler().GetStore().Watch(ctx, key, clientv3.WithPrefix()) {
 		if v.Err() != nil {
 			continue
@@ -74,11 +76,5 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 	cancel()
 }
 func (ecw *EtcdClientWatcher) ModifyLocal(key, val string) {
-	v, ok := ecw.configs.Load(key)
-	if ok && v.(string) != val {
-		ecw.configs.Store(key, val)
-		return
-	} else {
-		ecw.configs.Store(key, val)
-	}
+	ecw.configs.Store(key, val)
 }

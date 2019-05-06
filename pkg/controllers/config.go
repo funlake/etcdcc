@@ -3,6 +3,7 @@ package controllers
 import (
 	"etcdcc/apiserver/pkg/dto"
 	"etcdcc/apiserver/pkg/services"
+	"strconv"
 )
 
 type ConfigController struct {
@@ -33,6 +34,19 @@ func (c *ConfigController) Update() {
 	c.parseAndValidate(cdto)
 	service := services.Config{}
 	err := service.Update(cdto)
+	if err != nil{
+		c.fail(err.Error())
+		return
+	}
+	c.ok(nil)
+}
+
+func (c *ConfigController) Delete() {
+	cdto := &dto.ConfigDelDto{}
+	cdto.Id,_ = strconv.Atoi(c.Ctx.Input.Param("id"))
+	c.parseAndValidate(cdto)
+	service := services.Config{}
+	err := service.Delete(cdto)
 	if err != nil{
 		c.fail(err.Error())
 		return

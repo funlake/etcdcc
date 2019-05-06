@@ -15,7 +15,7 @@ type Json struct {
 	File *os.File
 }
 
-func (j *Json) SetFileName(file *os.File) {
+func (j *Json) SetFileHandler(file *os.File) {
 	j.File = file
 }
 func (j *Json) Save(configs sync.Map) error {
