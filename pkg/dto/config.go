@@ -14,6 +14,7 @@ type ConfigAddDto struct {
 	Mod string `form:"mod" valid:"Required"`
 	Key string `form:"key" valid:"Required"`
 	Val string `form:"val" valid:"Required"`
+	Type string `form:"type"`
 }
 // 自定义额外的判定
 func (cc *ConfigAddDto) Valid(v *validation.Validation) {
@@ -28,6 +29,7 @@ type ConfigEditDto struct {
 	Mod string `form:"mod" valid:"Required"`
 	Key string `form:"key" valid:"Required"`
 	Val string `form:"val" valid:"Required"`
+	Type string `form:"type"`
 }
 type ConfigDelDto struct {
 	Id int `form:"id" valid:"Required;Min(1)"`

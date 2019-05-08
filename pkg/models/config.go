@@ -8,6 +8,8 @@ type CenterConfig struct {
 	Mod string `json:"mod"`
 	Key string `json:"key"`
 	Val string `json:"val"`
+	Type string `json:"type"`
+	Version string `json:"version"`
 	BaseModel
 }
 
@@ -87,5 +89,5 @@ func (cc *CenterConfig) Delete() error {
 }
 
 func (cc *CenterConfig) formatEtcdKeys() string {
-	return cc.Env + "/" + cc.Mod + "/" + cc.Key
+	return cc.Env + "/" + cc.Mod + "/" + cc.Type + "/" + cc.Key
 }

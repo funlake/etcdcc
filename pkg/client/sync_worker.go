@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"etcdcc/apiserver/pkg/client/fileadapter"
 	"etcdcc/apiserver/pkg/log"
 	"fmt"
 	"github.com/funlake/gopkg/jobworker"
@@ -20,28 +19,32 @@ type SyncWorker struct {
 	timeout      int
 	retrySeconds int
 	dispatcher   *jobworker.BlockingDispatcher
-	latestTime   time.Time
-	*failConfig
+	latestTime   sync.Map
+	failConfigs  sync.Map
 }
 
 type failConfig struct {
 	t time.Time
-	c sync.Map
+	k interface{}
+	v interface{}
 }
 
-func (sw *SyncWorker) Do(configs sync.Map) {
-	memoryFile := "/dev/shm/" + sw.shmfile
-	mfs := strings.Split(sw.shmfile, "_")
-	modFile := mfs[len(mfs)-1]
+func (sw *SyncWorker) SyncOne(key, value interface{}) {
+	sk := strings.SplitN(key.(string), "/", 2)
+	ext := sk[0] //extension
+	rk  := sk[1]  //real key
+	memoryFile := "/dev/shm/" + rk
+	//mfs := strings.Split(sw.shmfile, "_")
+	//modFile := mfs[len(mfs)-1]
 	in := sw.dispatcher.Put(jobworker.NewSimpleJob(func() {
 		//1.Read and write
 		fh, err := os.OpenFile(memoryFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
-			log.Fatal("File not open correctly:" + err.Error())
+			log.Error("File not open correctly:" + err.Error())
+			return
+		} else {
+			_, err = fh.Write([]byte(value.(string)))
 		}
-		//fa := fileadapter.Json{File: fh}
-		//err = fa.Save(configs)
-		err = sw.setConfigContent("yaml",fh,configs)
 		defer func() {
 			err := fh.Close()
 			if err != nil {
@@ -51,18 +54,19 @@ func (sw *SyncWorker) Do(configs sync.Map) {
 		if err == nil {
 			//2.Move
 			p := time.Now().Format("200601021504")
-			err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+p)
+			err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+rk+"_"+p)
 			if err == nil {
 				//3.Symlink
-				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+p, sw.storeDir+"/"+modFile+".yaml")
+				log.Info("ln" + " -sfT" + " /tmp/config_"+rk+"_"+p + " " +sw.storeDir+"/"+rk+"."+ext)
+				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
 				if err == nil {
-					sw.setLatestTime(time.Now())
+					sw.setLatestTime(rk, time.Now())
 				}
 			}
 		}
 		if err != nil {
 			log.Error(err.Error())
-			sw.setFailConfig(configs)
+			sw.setFailConfig(key, value)
 		}
 	}, func() string {
 		return "config_sync_job"
@@ -70,46 +74,42 @@ func (sw *SyncWorker) Do(configs sync.Map) {
 		//never invoke..
 	}))
 	if !in {
-		sw.setFailConfig(configs)
+		sw.setFailConfig(key, value)
 	}
 }
-
-func (sw *SyncWorker) setLatestTime(t time.Time) {
-	sw.latestTime = t
+func (sw *SyncWorker) SyncAll(configs sync.Map) {
+	configs.Range(func(key, value interface{}) bool {
+		sw.SyncOne(key, value)
+		return true
+	})
 }
 
-func (sw *SyncWorker) setFailConfig(configs sync.Map) {
-	sw.failConfig = &failConfig{
+func (sw *SyncWorker) setLatestTime(key string, t time.Time) {
+	sw.latestTime.Store(key, t)
+}
+
+func (sw *SyncWorker) setFailConfig(key, value interface{}) {
+	sw.failConfigs.Store(key, failConfig{
 		t: time.Now(),
-		c: configs,
-	}
-}
-func (sw *SyncWorker) setConfigContent(adapter string,fh *os.File,configs sync.Map) error{
-	switch adapter {
-	case "json":
-	default:
-		fa := fileadapter.Json{File: fh}
-		return fa.Save(configs)
-	case "yaml":
-		fa := fileadapter.Yaml{File: fh}
-		return fa.Save(configs)
-	}
-	return nil
+		k: key,
+		v: value,
+	})
 }
 
 func (sw *SyncWorker) retryFails() {
 	tm := timer.NewTimer()
 	tm.Ready()
 	tm.SetInterval(sw.retrySeconds, func() {
-		if sw.failConfig != nil {
-			if sw.failConfig.t.After(sw.latestTime) {
-				log.Warn(fmt.Sprintf("Try to save configs fail to record last time : %v", sw.failConfig.c))
-				sw.Do(sw.failConfig.c)
-			} else {
-				//discard,since configs already the newer one
-				sw.failConfig = nil
+		sw.failConfigs.Range(func(key, value interface{}) bool {
+			if lt, ok := sw.latestTime.Load(key); ok {
+				vf := value.(failConfig)
+				if vf.t.After(lt.(time.Time)) {
+					log.Warn(fmt.Sprintf("Try to save configs fail to record last time : %v", vf.k))
+					sw.SyncOne(vf.k, vf.v)
+				}
 			}
-		}
+			return true
+		})
 	})
 }
 

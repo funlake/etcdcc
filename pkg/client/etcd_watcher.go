@@ -22,20 +22,20 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKey(key string) {}
 
 func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 	adapter := etcd.Adapter{}
-	storeDir := ecw.StoreDir + "/" + strings.Split(key, "/")[0]
-	err := os.Mkdir(storeDir, 0755)
+	storeDir := ecw.StoreDir + "/" + key
+	err := os.MkdirAll(storeDir, 0755)
 	if err != nil {
 		log.Error("Can not create directory for configuration files : " + err.Error())
 		return
 	}
-	worker := &SyncWorker{
+	syncWorker := &SyncWorker{
 		storeDir:     storeDir,
 		shmfile:      strings.Replace(key, "/", "_", -1),
 		retrySeconds: ecw.RetrySeconds,
-		//Big queue shared with single worker
+		//Big queue shared with single syncWorker
 		dispatcher: jobworker.NewBlockingDispather(1, 200),
 	}
-	go worker.retryFails()
+	go syncWorker.retryFails()
 	ctx, cancel := context.WithCancel(context.Background())
 	log.Info(fmt.Sprintf("Initialize configuration with %s", key))
 	//Initialize all configurations under mod
@@ -45,7 +45,7 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 			sk := strings.TrimLeft(string(e.Key), key)
 			ecw.ModifyLocal(sk, string(e.Value))
 		}
-		worker.Do(ecw.configs)
+		syncWorker.SyncAll(ecw.configs)
 	} else {
 		log.Error(err.Error())
 		return
@@ -70,7 +70,7 @@ func (ecw *EtcdClientWatcher) KeepEyesOnKeyWithPrefix(key string) {
 					ecw.configs.Delete(key)
 				}
 			}
-			worker.Do(ecw.configs)
+			syncWorker.SyncAll(ecw.configs)
 		}
 	}
 	cancel()

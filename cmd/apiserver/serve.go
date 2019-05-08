@@ -39,7 +39,7 @@ func init()  {
 	sp.StringVar(&EtcdCertFile,"c","/keys/ca.pem","Cert file for etcd connection")
 	sp.StringVar(&EtcdKeyFile,"k","/keys/ca-key.pem","Key file for etcd connection")
 	sp.StringVar(&EtcdCaFile,"ca","/keys/ca.crt","Ca file for etcd connection")
-	sp.StringVar(&EtcdServerName,"sn","etcchebao","Hostname for ssl verification")
+	sp.StringVar(&EtcdServerName,"sn","","ServerName for ssl verification")
 	sp.StringVar(&EtcdHosts,"hosts","127.0.0.1:2379","Hosts of etcd server")
 	sp.Uint8Var(&LogLevel,"loglevel",0,"log level")
 	if cobra.MarkFlagRequired(sp, "hosts") != nil {

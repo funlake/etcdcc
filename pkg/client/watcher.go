@@ -6,6 +6,6 @@ package client
 // 3. 只兼容linux,一些命令用linux原生执行(通用后期再考虑)
 type Watcher interface {
 	KeepEyesOnKey(key string)
-	KeepEyesOnKeyWithPrefix(key string, prefix interface{})
+	KeepEyesOnKeyWithPrefix(key string)
 	ModifyLocal(key, val string)
 }
