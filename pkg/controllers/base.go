@@ -53,10 +53,10 @@ func (b *BaseController) fail(msg string){
 	b.ServeJSON()
 }
 
-func(b *BaseController)parseAndValidate(obj interface{}){
+func(b *BaseController)parseAndValidate(obj interface{}) bool{
 	if err := b.ParseForm(obj);err != nil {
 		b.fail(err.Error())
-		return
+		return false
 	}
 	valid := &validation.Validation{}
 	if v,_ := valid.Valid(obj);!v{
@@ -65,6 +65,7 @@ func(b *BaseController)parseAndValidate(obj interface{}){
 			errs = append(errs,strings.ToLower(strings.Split(err.Key,".")[0]) + ":" + err.Message)
 		}
 		b.fail(strings.Join(errs,","))
-		return
+		return false
 	}
+	return true
 }

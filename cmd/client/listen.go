@@ -10,6 +10,7 @@ import (
 
 var (
 	mod            string
+	gmod 		   string
 	EtcdCertFile   string
 	EtcdKeyFile    string
 	EtcdCaFile     string
@@ -21,7 +22,7 @@ var (
 
 func init() {
 	var cp = ClientCommand.PersistentFlags()
-	cp.StringVar(&mod, "gmod", "global", "Name of prefix of global module")
+	cp.StringVar(&gmod, "gmod", "global", "Name of prefix of global module")
 	cp.StringVar(&mod, "mod", "global", "Name of prefix of current module")
 	cp.StringVar(&EtcdCertFile, "c", "/keys/ca.pem", "Cert file for etcd connection")
 	cp.StringVar(&EtcdKeyFile, "k", "/keys/ca-key.pem", "Key file for etcd connection")

@@ -19,37 +19,40 @@ func (c *ConfigController) List(){
 }
 func (c *ConfigController) Create()  {
 	cdto := &dto.ConfigAddDto{}
-	c.parseAndValidate(cdto)
-	service := services.Config{}
-	id,err := service.Create(cdto)
-	if err != nil{
-		c.fail(err.Error())
-		return
+	if c.parseAndValidate(cdto) {
+		service := services.Config{}
+		id, err := service.Create(cdto)
+		if err != nil {
+			c.fail(err.Error())
+			return
+		}
+		c.ok(id)
 	}
-	c.ok(id)
 }
 
 func (c *ConfigController) Update() {
 	cdto := &dto.ConfigEditDto{}
-	c.parseAndValidate(cdto)
-	service := services.Config{}
-	err := service.Update(cdto)
-	if err != nil{
-		c.fail(err.Error())
-		return
+	if c.parseAndValidate(cdto) {
+		service := services.Config{}
+		err := service.Update(cdto)
+		if err != nil {
+			c.fail(err.Error())
+			return
+		}
+		c.ok(nil)
 	}
-	c.ok(nil)
 }
 
 func (c *ConfigController) Delete() {
 	cdto := &dto.ConfigDelDto{}
-	cdto.Id,_ = strconv.Atoi(c.Ctx.Input.Param("id"))
-	c.parseAndValidate(cdto)
-	service := services.Config{}
-	err := service.Delete(cdto)
-	if err != nil{
-		c.fail(err.Error())
-		return
+	cdto.Id,_ = strconv.Atoi(c.Ctx.Input.Param(":id"))
+	if c.parseAndValidate(cdto) {
+		service := services.Config{}
+		err := service.Delete(cdto)
+		if err != nil {
+			c.fail(err.Error())
+			return
+		}
+		c.ok(nil)
 	}
-	c.ok(nil)
 }

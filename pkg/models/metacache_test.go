@@ -14,9 +14,20 @@ var metaTestModel = MetaCache{}
 func initConnect() {
 	metaTestAdapter.Connect("https://127.0.0.1:2479", "/keys/ca.pem", "/keys/ca-key.pem", "/keys/ca.crt", "etcchebao")
 }
-func TestEtcdService_Get(t *testing.T) {
+//func TestEtcdService_Get(t *testing.T) {
+//	initConnect()
+//	r, err := metaTestModel.Get("dev/act/act.conf")
+//	if err != nil {
+//		t.Log(err.Error())
+//	} else {
+//		t.Log(r)
+//		//Watch()
+//	}
+//}
+
+func TestEtcdService_Delete(t *testing.T) {
 	initConnect()
-	r, err := metaTestModel.Get("dev/act/act.conf")
+	r, err := metaTestModel.Delete("dev/act/conf/nginx")
 	if err != nil {
 		t.Log(err.Error())
 	} else {

@@ -1,6 +1,9 @@
 package models
 
-import "etcdcc/apiserver/pkg/log"
+import (
+	"encoding/base64"
+	"etcdcc/apiserver/pkg/log"
+)
 
 type CenterConfig struct {
 	Id  int    `json:"id"`
@@ -41,7 +44,7 @@ func (cc *CenterConfig) Create() (int64, error) {
 	err := db.Begin()
 	insertId, err = db.Insert(cc)
 	if err == nil {
-		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), cc.Val)
+		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), base64.StdEncoding.EncodeToString([]byte(cc.Val)))
 		if err != nil {
 			log.Error("Etcd put error:" + err.Error())
 			err = db.Rollback()
@@ -58,7 +61,7 @@ func (cc *CenterConfig) Update() error {
 	err := db.Begin()
 	_, err = db.Update(cc)
 	if err == nil {
-		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), cc.Val)
+		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(),  base64.StdEncoding.EncodeToString([]byte(cc.Val)))
 		if err != nil {
 			log.Error("Etcd put error:" + err.Error())
 			err = db.Rollback()

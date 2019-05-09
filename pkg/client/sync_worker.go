@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"encoding/base64"
 	"etcdcc/apiserver/pkg/log"
 	"fmt"
 	"github.com/funlake/gopkg/jobworker"
@@ -28,11 +29,15 @@ type failConfig struct {
 	k interface{}
 	v interface{}
 }
-
+func (sw *SyncWorker) RemoveOne(key interface{}){
+	ext,rk := getKeyAndExt(key.(string))
+	err := os.Remove(sw.storeDir + "/" + rk + "." + ext)
+	if err != nil{
+		log.Error(err.Error())
+	}
+}
 func (sw *SyncWorker) SyncOne(key, value interface{}) {
-	sk := strings.SplitN(key.(string), "/", 2)
-	ext := sk[0] //extension
-	rk  := sk[1]  //real key
+	ext,rk := getKeyAndExt(key.(string))
 	memoryFile := "/dev/shm/" + rk
 	//mfs := strings.Split(sw.shmfile, "_")
 	//modFile := mfs[len(mfs)-1]
@@ -43,7 +48,8 @@ func (sw *SyncWorker) SyncOne(key, value interface{}) {
 			log.Error("File not open correctly:" + err.Error())
 			return
 		} else {
-			_, err = fh.Write([]byte(value.(string)))
+			vb,_ := base64.StdEncoding.DecodeString(value.(string))
+			_, err = fh.Write(vb)
 		}
 		defer func() {
 			err := fh.Close()
@@ -57,7 +63,6 @@ func (sw *SyncWorker) SyncOne(key, value interface{}) {
 			err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+rk+"_"+p)
 			if err == nil {
 				//3.Symlink
-				log.Info("ln" + " -sfT" + " /tmp/config_"+rk+"_"+p + " " +sw.storeDir+"/"+rk+"."+ext)
 				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
 				if err == nil {
 					sw.setLatestTime(rk, time.Now())
@@ -119,4 +124,11 @@ func runCtxCommand(commands ...string) error {
 	err := cmd.Run()
 	cancel()
 	return err
+}
+
+func getKeyAndExt(key string)(string,string){
+	sk := strings.SplitN(key, "/", 2)
+	ext := sk[0] //extension
+	rk  := sk[1]  //real key
+	return ext,rk
 }
