@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type SyncWorker struct {
+type SyncFileWorker struct {
 	storeDir     string
 	shmfile      string
 	timeout      int
@@ -24,20 +24,15 @@ type SyncWorker struct {
 	failConfigs  sync.Map
 }
 
-type failConfig struct {
-	t time.Time
-	k interface{}
-	v interface{}
-}
-func (sw *SyncWorker) RemoveOne(key interface{}){
-	ext,rk := getKeyAndExt(key.(string))
+func (sw *SyncFileWorker) RemoveOne(key interface{}) {
+	ext, rk := getKeyAndExt(key.(string))
 	err := os.Remove(sw.storeDir + "/" + rk + "." + ext)
-	if err != nil{
+	if err != nil {
 		log.Error(err.Error())
 	}
 }
-func (sw *SyncWorker) SyncOne(key, value interface{}) {
-	ext,rk := getKeyAndExt(key.(string))
+func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
+	ext, rk := getKeyAndExt(key.(string))
 	memoryFile := "/dev/shm/" + rk
 	//mfs := strings.Split(sw.shmfile, "_")
 	//modFile := mfs[len(mfs)-1]
@@ -48,7 +43,7 @@ func (sw *SyncWorker) SyncOne(key, value interface{}) {
 			log.Error("File not open correctly:" + err.Error())
 			return
 		} else {
-			vb,_ := base64.StdEncoding.DecodeString(value.(string))
+			vb, _ := base64.StdEncoding.DecodeString(value.(string))
 			_, err = fh.Write(vb)
 		}
 		defer func() {
@@ -60,10 +55,12 @@ func (sw *SyncWorker) SyncOne(key, value interface{}) {
 		if err == nil {
 			//2.Move
 			p := time.Now().Format("200601021504")
-			err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+rk+"_"+p)
+			//err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+rk+"_"+p)
+			err = sw.moveFile(memoryFile, "/tmp/config_"+rk+"_"+p)
 			if err == nil {
 				//3.Symlink
-				err = runCtxCommand("ln", "-sfT", "/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
+				//err = runCtxCommand("ln", "-sfT", "/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
+				err = sw.linkFile("/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
 				if err == nil {
 					sw.setLatestTime(rk, time.Now())
 				}
@@ -82,18 +79,18 @@ func (sw *SyncWorker) SyncOne(key, value interface{}) {
 		sw.setFailConfig(key, value)
 	}
 }
-func (sw *SyncWorker) SyncAll(configs sync.Map) {
+func (sw *SyncFileWorker) SyncAll(configs sync.Map) {
 	configs.Range(func(key, value interface{}) bool {
 		sw.SyncOne(key, value)
 		return true
 	})
 }
 
-func (sw *SyncWorker) setLatestTime(key string, t time.Time) {
+func (sw *SyncFileWorker) setLatestTime(key string, t time.Time) {
 	sw.latestTime.Store(key, t)
 }
 
-func (sw *SyncWorker) setFailConfig(key, value interface{}) {
+func (sw *SyncFileWorker) setFailConfig(key, value interface{}) {
 	sw.failConfigs.Store(key, failConfig{
 		t: time.Now(),
 		k: key,
@@ -101,7 +98,15 @@ func (sw *SyncWorker) setFailConfig(key, value interface{}) {
 	})
 }
 
-func (sw *SyncWorker) retryFails() {
+func (sw *SyncFileWorker) moveFile(source, target string) error {
+	return runCtxCommand("cp", "-f", source, target)
+}
+
+func (sw *SyncFileWorker) linkFile(source, target string) error {
+	return runCtxCommand("ln", "-sfT", source, target)
+}
+
+func (sw *SyncFileWorker) Retry() {
 	tm := timer.NewTimer()
 	tm.Ready()
 	tm.SetInterval(sw.retrySeconds, func() {
@@ -126,9 +131,9 @@ func runCtxCommand(commands ...string) error {
 	return err
 }
 
-func getKeyAndExt(key string)(string,string){
+func getKeyAndExt(key string) (string, string) {
 	sk := strings.SplitN(key, "/", 2)
 	ext := sk[0] //extension
-	rk  := sk[1]  //real key
-	return ext,rk
+	rk := sk[1]  //real key
+	return ext, rk
 }

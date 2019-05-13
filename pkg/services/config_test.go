@@ -10,43 +10,38 @@ func initConfigTest(){
 	mysql.Adapter.Connect(mysql.Adapter{})
 	etcd.Adapter.Connect(etcd.Adapter{},"https://127.0.0.1:2479","/keys/ca.pem","/keys/ca-key.pem","/keys/ca.crt","etcchebao")
 }
-func TestConfig_Create(t *testing.T) {
+func TestConfig_Crud(t *testing.T) {
 	initConfigTest()
 	fake := &dto.ConfigAddDto{
 		Env: "dev",
-		Mod: "gateway",
-		Key: "proxy/access_token",
+		Mod: "act",
+		Key: "goodboy",
 		Val: "www-dev2",
+		Type: "json",
 	}
 	cs := Config{}
-	_ ,err := cs.Create(fake)
+	id ,err := cs.Create(fake)
 	if err != nil{
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
-}
-func TestConfig_Update(t *testing.T) {
-	fake := &dto.ConfigEditDto{
-		Id: 10,
+	fake2 := &dto.ConfigEditDto{
+		Id: int(id),
 		Env: "dev",
-		Mod: "gateway",
-		Key: "proxy/access_token",
-		Val: "www-dev14",
+		Mod: "act",
+		Key: "goodboy",
+		Val: `{"a":"b",
+		"c":4}`,
+		Type: "json",
 	}
-	cs := Config{}
-	err := cs.Update(fake)
+	err = cs.Update(fake2)
 	if err != nil{
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
-}
-func TestConfig_Delete(t *testing.T) {
-	//initConfigTest()
-	fake := &dto.ConfigDelDto{
-		Id: 5,
-	}
-	cs := Config{}
-	err := cs.Delete(fake)
+	err = cs.Delete(&dto.ConfigDelDto{
+		Id: int(id),
+	})
 	if err != nil{
-		t.Log(err.Error())
+		t.Fatal(err.Error())
 	}
 }
 

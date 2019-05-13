@@ -18,7 +18,6 @@ func (md Adapter) Connect(){
 	pwd  := viper.Get("MYSQL_PASSWORD")
 	db   := viper.Get("MYSQL_DB_CC")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&&loc=Local",user,pwd,host,db)
-	log.Debug(dsn)
 	err := orm.RegisterDataBase("default", "mysql", dsn)
 	if err != nil {
 		log.Fatal("Mysql connection fail:"+err.Error())

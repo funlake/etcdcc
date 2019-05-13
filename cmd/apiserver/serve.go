@@ -10,22 +10,22 @@ import (
 	"github.com/spf13/cobra"
 )
 var (
-	port string
-	EtcdCertFile string
-	EtcdKeyFile string
-	EtcdCaFile string
-	EtcdServerName string
-	EtcdHosts string
-	LogLevel uint8
+	port           string
+	etcdCertFile   string
+	etcdKeyFile    string
+	etcdCaFile     string
+	etcdServerName string
+	etcdHosts      string
+	logLevel       uint8
 )
 
 var ServeCommand = &cobra.Command{
 	Use: "start restful server",
 	Short: "Run etcd admin restful api",
 	Run: func(cmd *cobra.Command, args []string) {
-		zerolog.SetGlobalLevel(zerolog.Level(LogLevel))
+		zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 		log.Info("Listening on port:"+port)
-		etcd.Adapter.Connect(etcd.Adapter{},EtcdHosts,EtcdCertFile,EtcdKeyFile,EtcdCaFile,EtcdServerName)
+		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
 		mysql.Adapter.Connect(mysql.Adapter{})
 		log.Info("Successfully connected to mysql server")
@@ -36,12 +36,12 @@ var ServeCommand = &cobra.Command{
 func init()  {
 	var sp = ServeCommand.PersistentFlags()
 	sp.StringVar(&port,"port","80","Port of restful server")
-	sp.StringVar(&EtcdCertFile,"c","/keys/ca.pem","Cert file for etcd connection")
-	sp.StringVar(&EtcdKeyFile,"k","/keys/ca-key.pem","Key file for etcd connection")
-	sp.StringVar(&EtcdCaFile,"ca","/keys/ca.crt","Ca file for etcd connection")
-	sp.StringVar(&EtcdServerName,"sn","","ServerName for ssl verification")
-	sp.StringVar(&EtcdHosts,"hosts","127.0.0.1:2379","Hosts of etcd server")
-	sp.Uint8Var(&LogLevel,"loglevel",0,"log level")
+	sp.StringVar(&etcdCertFile,"c","/keys/ca.pem","Cert file for etcd connection")
+	sp.StringVar(&etcdKeyFile,"k","/keys/ca-key.pem","Key file for etcd connection")
+	sp.StringVar(&etcdCaFile,"ca","/keys/ca.crt","Ca file for etcd connection")
+	sp.StringVar(&etcdServerName,"sn","","ServerName for ssl verification")
+	sp.StringVar(&etcdHosts,"hosts","127.0.0.1:2379","Hosts of etcd server")
+	sp.Uint8Var(&logLevel,"loglevel",0,"log level")
 	if cobra.MarkFlagRequired(sp, "hosts") != nil {
 		//cobra.MarkFlagRequired(sp, "k") != nil ||
 		//cobra.MarkFlagRequired(sp, "ca") != nil {

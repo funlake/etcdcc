@@ -1,4 +1,7 @@
-package client
+/**
+unix domain socket for easily integration
+ */
+package uds
 
 import (
 	"etcdcc/apiserver/pkg/client"
@@ -7,7 +10,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 )
-
 var (
 	mod            string
 	gmod           string
@@ -19,9 +21,8 @@ var (
 	retrySeconds   int
 	storeDir       string
 )
-
-func init() {
-	var cp = ClientCommand.PersistentFlags()
+func init(){
+	var cp = UdsCommand.PersistentFlags()
 	cp.StringVar(&gmod, "gmod", "global", "Name of prefix of global module")
 	cp.StringVar(&mod, "mod", "global", "Name of prefix of current module")
 	cp.StringVar(&etcdCertFile, "c", "/keys/ca.pem", "Cert file for etcd connection")
@@ -39,14 +40,15 @@ func init() {
 		log.Error("Fail to set required")
 	}
 }
-
-var ClientCommand = &cobra.Command{
-	Use:   "client",
-	Short: "Listening config changes & modified local configuration",
+var UdsCommand = &cobra.Command{
+	Use:   "uds",
+	Short: "Listening config changes & server on uds",
 	Run: func(cmd *cobra.Command, args []string) {
 		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
-		log.Info("Successfully connected to etcd server")
-		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds,StoreDir:storeDir}
+		log.Info("Successfully connected to etcd server[uds]")
+		wc := &client.EtcdUdsWatcher{}
+		go wc.Serve()
 		wc.KeepEyesOnKeyWithPrefix(fmt.Sprintf("dev/%s", mod))
+
 	},
 }
