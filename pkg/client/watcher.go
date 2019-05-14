@@ -20,16 +20,17 @@ type Watcher interface {
 	//Watch(key string, putCallback func(k, v string), delCallBack func(mk, k string, cancel context.CancelFunc))
 }
 
-type GeneralWatcher struct {}
-func (gw *GeneralWatcher) KeepEyesOnKey(key string){}
-func (gw *GeneralWatcher) KeepEyesOnKeyWithPrefix(module string){}
-func (gw *GeneralWatcher) Init(moduleKey string, callback func(k, v string)) {
-	log.Info(fmt.Sprintf("Initialize configuration with %s", moduleKey))
+type GeneralWatcher struct{}
+
+func (gw *GeneralWatcher) KeepEyesOnKey(key string)              {}
+func (gw *GeneralWatcher) KeepEyesOnKeyWithPrefix(module string) {}
+func (gw *GeneralWatcher) Init(prefix string, callback func(k, v string)) {
+	log.Info(fmt.Sprintf("Initialize configuration for prefix %s", prefix))
 	adapter := etcd.Adapter{}
-	allKeys, err := adapter.GetMetaCacheHandler().GetStore().Get(moduleKey+"/", clientv3.WithPrefix())
+	allKeys, err := adapter.GetMetaCacheHandler().GetStore().Get(prefix+"/", clientv3.WithPrefix())
 	if err == nil {
 		for _, e := range allKeys.(*clientv3.GetResponse).Kvs {
-			sk := strings.TrimPrefix(string(e.Key), moduleKey+"/")
+			sk := strings.TrimPrefix(string(e.Key), prefix+"/")
 			//ecw.ModifyLocal(sk, string(e.Value))
 			callback(sk, string(e.Value))
 		}

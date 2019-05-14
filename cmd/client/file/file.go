@@ -1,4 +1,4 @@
-package client
+package file
 
 import (
 	"etcdcc/apiserver/pkg/client"
@@ -9,8 +9,7 @@ import (
 )
 
 var (
-	mod            string
-	gmod           string
+	prefix         string
 	etcdCertFile   string
 	etcdKeyFile    string
 	etcdCaFile     string
@@ -21,18 +20,17 @@ var (
 )
 
 func init() {
-	var cp = ClientCommand.PersistentFlags()
-	cp.StringVar(&gmod, "gmod", "global", "Name of prefix of global module")
-	cp.StringVar(&mod, "mod", "global", "Name of prefix of current module")
+	var cp = FileCommand.PersistentFlags()
+	cp.StringVar(&prefix, "prefix", "global", "Name of prefix of current module")
 	cp.StringVar(&etcdCertFile, "c", "/keys/ca.pem", "Cert file for etcd connection")
 	cp.StringVar(&etcdKeyFile, "k", "/keys/ca-key.pem", "Key file for etcd connection")
 	cp.StringVar(&etcdCaFile, "ca", "/keys/ca.crt", "Ca file for etcd connection")
-	cp.StringVar(&etcdServerName, "sn", "etcchebao", "Hostname for ssl verification")
+	cp.StringVar(&etcdServerName, "sn", "", "ServerName for ssl verification")
 	cp.StringVar(&etcdHosts, "hosts", "127.0.0.1:2379", "Hosts of etcd server")
 	cp.IntVar(&retrySeconds,"retrySeconds",3,"Fails retry in ? seconds")
 	cp.StringVar(&storeDir,"storeDir","/tmp","Directory of config file")
 
-	if cobra.MarkFlagRequired(cp, "mod") != nil ||
+	if cobra.MarkFlagRequired(cp, "prefix") != nil ||
 		cobra.MarkFlagRequired(cp, "hosts") != nil {
 		//cobra.MarkFlagRequired(sp, "k") != nil ||
 		//cobra.MarkFlagRequired(sp, "ca") != nil {
@@ -40,13 +38,13 @@ func init() {
 	}
 }
 
-var ClientCommand = &cobra.Command{
+var FileCommand = &cobra.Command{
 	Use:   "client",
 	Short: "Listening config changes & modified local configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
 		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds,StoreDir:storeDir}
-		wc.KeepEyesOnKeyWithPrefix(fmt.Sprintf("dev/%s", mod))
+		wc.KeepEyesOnKeyWithPrefix(fmt.Sprintf("dev/%s", prefix))
 	},
 }

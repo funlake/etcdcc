@@ -48,6 +48,7 @@ func (ecw *EtcdFileWatcher) SetWorker(module string) {
 		syncWorker.RemoveOne(k)
 	})
 }
+
 //func (ecw *EtcdFileWatcher) Init(moduleKey string, callback func(k, v string)) {
 //	log.Info(fmt.Sprintf("Initialize configuration with %s", moduleKey))
 //	adapter := etcd.Adapter{}
