@@ -5,10 +5,10 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"etcdcc/apiserver/pkg/log"
 	"github.com/BurntSushi/toml"
 	"github.com/ghodss/yaml"
-	"github.com/pkg/errors"
 	"github.com/tidwall/gjson"
 	"net"
 	"os"
@@ -22,10 +22,11 @@ const (
 	TypeToml = "toml"
 	TypeProp = "prop"
 )
-
+var readBuffer = make([]byte, 1024)
 type EtcdUdsWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
+
 }
 
 func (euw *EtcdUdsWatcher) KeepEyesOnKey(key string) {}
@@ -86,15 +87,18 @@ func (euw *EtcdUdsWatcher) ServeSocket(sockFile string) {
 		go euw.handle(fd)
 	}
 }
-
 func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 	for {
-		buf := make([]byte, 512)
-		n, err := fd.Read(buf)
+		n, err := fd.Read(readBuffer)
 		if err != nil {
 			return
 		}
-		msg := string(buf[0:n])
+		msg := string(readBuffer[0:n])
+		//log.Info(fmt.Sprintf("%d",n))
+		//_, _ = io.Copy(fd, &CommandReader{
+		//	watcher: euw,
+		//	command: msg,
+		//})
 		cmd := strings.SplitN(msg, " ", 3)
 		switch strings.ToLower(cmd[0]) {
 		case "get":
@@ -107,7 +111,7 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 					if val != "" {
 						_, err = fd.Write([]byte(val))
 					} else {
-						err = errors.New("Not found")
+						err = errors.New("NotFound")
 					}
 				} else {
 					_, err = fd.Write([]byte(r.(string)))
@@ -117,7 +121,7 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 					log.Error("Uds response error:" + err.Error())
 				}
 			} else {
-				_, _ = fd.Write([]byte("Not found " + cmd[1]))
+				_, _ = fd.Write([]byte("NotFound " + cmd[1]))
 			}
 		case "raw":
 			r, ok := euw.rawConfig.Load(cmd[1])
@@ -153,3 +157,61 @@ func (euw *EtcdUdsWatcher) getSpecifyKey(raw, k, t string) string {
 	}
 	return raw
 }
+
+
+//type Command struct {
+//}
+//func (cm *Command) CleanCommand(raw string) []string{
+//	return strings.SplitN(raw, " ", 3)
+//}
+//type CommandReader struct {
+//	watcher *EtcdUdsWatcher
+//	command string
+//	Command
+//}
+//func (gcr *CommandReader) Read(p []byte) (int,error){
+//	cmd := gcr.CleanCommand(gcr.command)
+//	switch strings.ToLower(cmd[0]) {
+//	case "get":
+//		r, ok := gcr.watcher.rawConfig.Load(cmd[1])
+//		if ok {
+//			val := ""
+//			if len(cmd) > 2 {
+//				ts := strings.SplitN(cmd[1], "/", 2)
+//				val = gcr.watcher.getSpecifyKey(r.(string), cmd[2], ts[0])
+//				p = []byte(val)
+//			} else {
+//				p = []byte(r.(string))
+//			}
+//		} else {
+//			p = []byte("Not found " + cmd[1])
+//		}
+//	case "raw":
+//		r, ok := gcr.watcher.rawConfig.Load(cmd[1])
+//		var c []byte
+//		if ok {
+//			ts := strings.SplitN(cmd[1], "/", 2)
+//			switch ts[0] {
+//			case TypeYaml:
+//				c, _ = yaml.JSONToYAML([]byte(r.(string)))
+//			case TypeToml:
+//				var b bytes.Buffer
+//				var m interface{}
+//				_ = json.Unmarshal([]byte(r.(string)), &m)
+//				_ = toml.NewEncoder(&b).Encode(m)
+//				c = b.Bytes()
+//			default:
+//				c = []byte(r.(string))
+//			}
+//			p = c
+//		} else {
+//			p = []byte("No specify configuration for " + cmd[1])
+//			//copy(p,[]byte("No specify configuration for " + cmd[1]))
+//		}
+//	default:
+//		log.Error("Unknown Command:[" + gcr.command + "]")
+//		p = []byte("Unknown Command:[" + gcr.command + "]")
+//	}
+//	return len(p),io.EOF
+//}
+
