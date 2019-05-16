@@ -1,4 +1,4 @@
-package models
+package dao
 
 import (
 	"encoding/base64"
@@ -13,7 +13,7 @@ type CenterConfig struct {
 	Val string `json:"val"`
 	Type string `json:"type"`
 	Version string `json:"version"`
-	BaseModel
+	BaseDao
 }
 
 func (cc *CenterConfig) TableName() string {

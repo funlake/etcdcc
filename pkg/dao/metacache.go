@@ -1,8 +1,8 @@
-package models
+package dao
 
 import (
 	"errors"
-	"etcdcc/apiserver/pkg/dao/adapter/etcd"
+	"etcdcc/apiserver/pkg/storage/adapter/etcd"
 )
 
 var metaHandler = etcd.Adapter{}

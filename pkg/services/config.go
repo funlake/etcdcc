@@ -1,58 +1,58 @@
 package services
 
 import (
+	"etcdcc/apiserver/pkg/dao"
 	"etcdcc/apiserver/pkg/dto"
-	"etcdcc/apiserver/pkg/models"
 )
 
 type Config struct {}
 func (c Config) List(start int, limit int, q []string)(interface{},int64){
-	configModel := &models.CenterConfig{}
-	configModel.SetPageParams(start,limit)
-	configModel.SetSearchCdt(q)
-	configModel.SetSearchMap(dto.CONFIG_SEARCH)
-	return configModel.List()
+	configDao := &dao.CenterConfig{}
+	configDao.SetPageParams(start,limit)
+	configDao.SetSearchCdt(q)
+	configDao.SetSearchMap(dto.CONFIG_SEARCH)
+	return configDao.List()
 }
 func (c Config) Create(cdto *dto.ConfigAddDto)(int64,error){
-	configModel := &models.CenterConfig{
+	configDao := &dao.CenterConfig{
 		Key: cdto.Key,
 		Val: cdto.Val,
 		Env: cdto.Env,
 		Mod: cdto.Mod,
 		Type: cdto.Type,
 	}
-	return configModel.Create()
+	return configDao.Create()
 }
 func (c Config) Update(cdto *dto.ConfigEditDto) error {
-	configModel := &models.CenterConfig{
+	configDao := &dao.CenterConfig{
 		Id: cdto.Id,
 	}
-	err := configModel.Find()
+	err := configDao.Find()
 	if err != nil{
 		return err
 	}
-	configModel.Key = cdto.Key
-	configModel.Val = cdto.Val
-	configModel.Env = cdto.Env
-	configModel.Mod = cdto.Mod
-	configModel.Type = cdto.Type
-	//configModel := &models.CenterConfig{
+	configDao.Key = cdto.Key
+	configDao.Val = cdto.Val
+	configDao.Env = cdto.Env
+	configDao.Mod = cdto.Mod
+	configDao.Type = cdto.Type
+	//configDao := &dao.CenterConfig{
 	//	Id: cdto.Id,
 	//	Key: cdto.Key,
 	//	Val: cdto.Val,
 	//	Env: cdto.Env,
 	//	Mod: cdto.Mod,
 	//}
-	return configModel.Update()
+	return configDao.Update()
 }
 func (c Config) Delete(cdto *dto.ConfigDelDto) error {
-	configModel := &models.CenterConfig{
+	configDao := &dao.CenterConfig{
 		Id: cdto.Id,
 	}
-	err := configModel.Find()
+	err := configDao.Find()
 	if err != nil{
 		return err
 	}
-	return configModel.Delete()
+	return configDao.Delete()
 }
 

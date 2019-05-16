@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"etcdcc/apiserver/pkg/log"
-	"etcdcc/apiserver/pkg/models"
+	"etcdcc/apiserver/pkg/dao"
 	"fmt"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
@@ -25,7 +25,7 @@ func (md Adapter) Connect(){
 		//设置最大链接数
 		orm.SetMaxIdleConns("default", 100)
 		orm.SetMaxOpenConns("default", 300)
-		orm.RegisterModel(&models.CenterConfig{})
+		orm.RegisterModel(&dao.CenterConfig{})
 		orm.Debug = true
 	}
 }

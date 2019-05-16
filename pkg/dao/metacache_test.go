@@ -1,8 +1,8 @@
-package models
+package dao
 
 import (
 	"context"
-	"etcdcc/apiserver/pkg/dao/adapter/etcd"
+	"etcdcc/apiserver/pkg/storage/adapter/etcd"
 	"fmt"
 	"github.com/coreos/etcd/clientv3"
 	"testing"

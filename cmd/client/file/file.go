@@ -2,7 +2,7 @@ package file
 
 import (
 	"etcdcc/apiserver/pkg/client"
-	"etcdcc/apiserver/pkg/dao/adapter/etcd"
+	"etcdcc/apiserver/pkg/storage/adapter/etcd"
 	"etcdcc/apiserver/pkg/log"
 	"fmt"
 	"github.com/spf13/cobra"

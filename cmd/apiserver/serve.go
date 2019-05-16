@@ -1,10 +1,10 @@
 package apiserver
 
 import (
-	"etcdcc/apiserver/pkg/dao/adapter/etcd"
-	"etcdcc/apiserver/pkg/dao/adapter/mysql"
 	"etcdcc/apiserver/pkg/log"
 	_ "etcdcc/apiserver/pkg/routes"
+	"etcdcc/apiserver/pkg/storage/adapter/etcd"
+	"etcdcc/apiserver/pkg/storage/adapter/mysql"
 	"github.com/astaxie/beego"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"

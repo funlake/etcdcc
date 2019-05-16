@@ -1,8 +1,8 @@
 package services
 
 import (
-	"etcdcc/apiserver/pkg/dao/adapter/etcd"
-	"etcdcc/apiserver/pkg/dao/adapter/mysql"
+	"etcdcc/apiserver/pkg/storage/adapter/etcd"
+	"etcdcc/apiserver/pkg/storage/adapter/mysql"
 	"etcdcc/apiserver/pkg/dto"
 	"testing"
 )
