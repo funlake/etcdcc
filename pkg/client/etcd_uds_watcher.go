@@ -53,22 +53,27 @@ func (euw *EtcdUdsWatcher) SaveLocal(k, v string) {
 		log.Error("Base64 decode error:" + err.Error())
 	} else {
 		//transform yaml/toml to json for easy handling
-		if strings.HasPrefix(k, TypeYaml+"/") {
-			r, err = yaml.YAMLToJSON(r)
-			if err != nil {
-				log.Error("Yaml to json error :" + err.Error())
-			}
-		}
-		if strings.HasPrefix(k, TypeToml+"/") {
-			var tm interface{}
-			_, err = toml.Decode(string(r), &tm)
-			if err != nil {
-				log.Error("Toml decode error :" + err.Error())
-			}
-			r, err = json.Marshal(tm)
-		}
+		r, err = euw.jsonEncode(r, k)
 		euw.rawConfig.Store(k, string(r))
 	}
+}
+func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
+	var err error
+	if strings.HasPrefix(prefix, TypeYaml+"/") {
+		r, err = yaml.YAMLToJSON(r)
+		if err != nil {
+			log.Error("Yaml to json error :" + err.Error())
+		}
+	}
+	if strings.HasPrefix(prefix, TypeToml+"/") {
+		var tm interface{}
+		_, err = toml.Decode(string(r), &tm)
+		if err != nil {
+			log.Error("Toml decode error :" + err.Error())
+		}
+		r, err = json.Marshal(tm)
+	}
+	return r, err
 }
 func (euw *EtcdUdsWatcher) ServeSocket(sockFile string) {
 	_ = os.Remove(sockFile)
@@ -90,35 +95,25 @@ func (euw *EtcdUdsWatcher) ServeSocket(sockFile string) {
 }
 func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 	for {
-		n, err := fd.Read(readBuffer)
+		cmd, err := euw.getCmd(fd)
 		if err != nil {
+			log.Error("Get cmd error:" + err.Error())
+			_, _ = fd.Write([]byte("fail," + err.Error()))
 			return
 		}
-		msg := string(readBuffer[0:n])
-		cmd := strings.SplitN(msg, " ", 3)
 		switch strings.ToLower(cmd[0]) {
 		case "get":
-			r, ok := euw.rawConfig.Load(cmd[1])
-			if ok {
-				val := ""
-				if len(cmd) > 2 {
-					ts := strings.SplitN(cmd[1], "/", 2)
-					val = euw.getSpecifyKey(r.(string), cmd[2], ts[0])
-					if val != "" {
-						_, err = fd.Write([]byte(val))
-					} else {
-						err = errors.New("NotFound")
-					}
-				} else {
-					_, err = fd.Write([]byte(r.(string)))
-				}
-				if err != nil {
-					_, _ = fd.Write([]byte(err.Error()))
-					log.Error("Uds response error:" + err.Error())
-				}
+			val, err := euw.find(cmd)
+			if err != nil {
+				_, err = fd.Write([]byte("fail," + err.Error()))
 			} else {
-				_, _ = fd.Write([]byte("NotFound " + cmd[1]))
+				_, err = fd.Write([]byte("ok," + val))
 			}
+			if err != nil {
+				_, _ = fd.Write([]byte("fail," + err.Error()))
+				log.Error("Uds response error:" + err.Error())
+			}
+		//sometimes need to check raw format things
 		case "raw":
 			r, ok := euw.rawConfig.Load(cmd[1])
 			var c []byte
@@ -141,15 +136,38 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 				_, _ = fd.Write([]byte("No specify configuration for " + cmd[1]))
 			}
 		default:
-			log.Error("Unknown command:[" + msg + "]")
+			log.Error("Unknown command:[" + strings.Join(cmd, " ") + "]")
 		}
 	}
 }
-
-func (euw *EtcdUdsWatcher) getSpecifyKey(raw, k, t string) string {
-	switch t {
+func (euw *EtcdUdsWatcher) getCmd(fd net.Conn) ([]string, error) {
+	n, err := fd.Read(readBuffer)
+	if err != nil {
+		return []string{}, err
+	}
+	msg := string(readBuffer[0:n])
+	cmd := strings.SplitN(msg, " ", 3)
+	return cmd, nil
+}
+func (euw *EtcdUdsWatcher) find(cmd []string) (string, error) {
+	r, ok := euw.rawConfig.Load(cmd[1])
+	if ok {
+		if len(cmd) > 2 {
+			val := euw.getSpecifyKey(r.(string), cmd)
+			if val != "" {
+				return val, nil
+			}
+		} else {
+			return r.(string), nil
+		}
+	}
+	return "", errors.New("NotFound")
+}
+func (euw *EtcdUdsWatcher) getSpecifyKey(raw string, cmd []string) string {
+	t := strings.SplitN(cmd[1], "/", 2)
+	switch t[0] {
 	case TypeJson, TypeToml, TypeYaml:
-		return gjson.Get(raw, k).String()
+		return gjson.Get(raw, cmd[2]).String()
 	}
 	return raw
 }

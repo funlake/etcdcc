@@ -1,10 +1,7 @@
 package dao
 
 import (
-	"context"
 	"etcdcc/apiserver/pkg/storage/adapter/etcd"
-	"fmt"
-	"github.com/coreos/etcd/clientv3"
 	"testing"
 )
 
@@ -14,6 +11,7 @@ var metaTestModel = MetaCache{}
 func initConnect() {
 	metaTestAdapter.Connect("https://127.0.0.1:2479", "/keys/ca.pem", "/keys/ca-key.pem", "/keys/ca.crt", "etcchebao")
 }
+
 //func TestEtcdService_Get(t *testing.T) {
 //	initConnect()
 //	r, err := metaTestModel.Get("dev/act/act.conf")
@@ -32,20 +30,6 @@ func TestEtcdService_Delete(t *testing.T) {
 		t.Log(err.Error())
 	} else {
 		t.Log(r)
-		//Watch()
-	}
-}
-
-func Watch() {
-	ctx, cancel := context.WithCancel(context.Background())
-	for v := range metaTestAdapter.GetMetaCacheHandler().GetStore().Watch(ctx, "dev/gateway", clientv3.WithPrefix()) {
-		if v.Err() != nil {
-			cancel()
-		}
-		for _, e := range v.Events {
-			tp := fmt.Sprintf("%v", e.Type)
-			fmt.Println(tp, string(e.Kv.Key), string(e.Kv.Value))
-		}
 	}
 }
 
