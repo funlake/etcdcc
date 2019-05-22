@@ -1,7 +1,7 @@
+[![Build Status](https://travis-ci.org/funlake/etcdcc.svg?branch=master)](https://travis-ci.org/funlake/etcdcc)
 # etcdcc-apiserver
 #### What's this
 Restful/grpc service for config center base on etcd which's distributed,stable,high performance k/v store storage.
-this service generally serve etcdcc-ui
 
 #### How it works
 Receive http/grpc request,and save/del/update specific k/v record in etcd3
