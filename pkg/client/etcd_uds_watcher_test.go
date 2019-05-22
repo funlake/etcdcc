@@ -8,8 +8,8 @@ import (
 var watcher = &EtcdUdsWatcher{}
 
 func initData() {
-	watcher.SaveLocal("json/lake", base64.StdEncoding.EncodeToString([]byte(`{"a":{"b":{"c":"hello"}},"d":"world"}`)))
-	watcher.SaveLocal("toml/lake", base64.StdEncoding.EncodeToString([]byte(`
+	watcher.saveLocal("json/lake", base64.StdEncoding.EncodeToString([]byte(`{"a":{"b":{"c":"hello"}},"d":"world"}`)))
+	watcher.saveLocal("toml/lake", base64.StdEncoding.EncodeToString([]byte(`
 # This is a TOML document. Boom.
 title = "TOML Example"
 [owner]
@@ -38,7 +38,7 @@ hosts = [
   "omega"
 ]
 	`)))
-	watcher.SaveLocal("yaml/lake", base64.StdEncoding.EncodeToString([]byte(`
+	watcher.saveLocal("yaml/lake", base64.StdEncoding.EncodeToString([]byte(`
 service:
   image: registry.cn/abcd
   restart: always

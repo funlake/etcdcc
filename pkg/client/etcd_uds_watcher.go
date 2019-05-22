@@ -17,29 +17,30 @@ import (
 )
 
 const (
-	TypeYaml = "yaml"
-	TypeJson = "json"
-	TypeToml = "toml"
-	TypeProp = "prop"
+	typeYaml = "yaml"
+	typeJson = "json"
+	typeToml = "toml"
+	typeProp = "prop"
 )
 
 var readBuffer = make([]byte, 1024)
 
+//Unix domain socket watcher for etcd
 type EtcdUdsWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
 }
 
+//Watching specific key
 func (euw *EtcdUdsWatcher) KeepEyesOnKey(key string) {}
 
-//1. watch etcd
-//2. serve uds
+//Watch etcd with prefix
 func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 	euw.Init(prefix, func(k, v string) {
-		euw.SaveLocal(k, v)
+		euw.saveLocal(k, v)
 	})
 	euw.Watch(prefix, func(k, v string) {
-		euw.SaveLocal(k, v)
+		euw.saveLocal(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		if mk == k {
 			cancel()
@@ -47,7 +48,7 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 		euw.rawConfig.Delete(k)
 	})
 }
-func (euw *EtcdUdsWatcher) SaveLocal(k, v string) {
+func (euw *EtcdUdsWatcher) saveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {
 		log.Error("Base64 decode error:" + err.Error())
@@ -59,13 +60,13 @@ func (euw *EtcdUdsWatcher) SaveLocal(k, v string) {
 }
 func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
 	var err error
-	if strings.HasPrefix(prefix, TypeYaml+"/") {
+	if strings.HasPrefix(prefix, typeYaml+"/") {
 		r, err = yaml.YAMLToJSON(r)
 		if err != nil {
 			log.Error("Yaml to json error :" + err.Error())
 		}
 	}
-	if strings.HasPrefix(prefix, TypeToml+"/") {
+	if strings.HasPrefix(prefix, typeToml+"/") {
 		var tm interface{}
 		_, err = toml.Decode(string(r), &tm)
 		if err != nil {
@@ -73,11 +74,13 @@ func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
 		}
 		r, err = json.Marshal(tm)
 	}
-	if strings.HasPrefix(prefix, TypeProp+"/") {
+	if strings.HasPrefix(prefix, typeProp+"/") {
 		//strings.Split(io.EOF,string(r))
 	}
 	return r, err
 }
+
+//Serve unix socket for applications
 func (euw *EtcdUdsWatcher) ServeSocket(sockFile string) {
 	_ = os.Remove(sockFile)
 	ln, err := net.Listen("unix", sockFile)
@@ -121,9 +124,9 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 			if ok {
 				ts := strings.SplitN(cmd[1], "/", 2)
 				switch ts[0] {
-				case TypeYaml:
+				case typeYaml:
 					c, _ = yaml.JSONToYAML([]byte(r.(string)))
-				case TypeToml:
+				case typeToml:
 					var b bytes.Buffer
 					var m interface{}
 					_ = json.Unmarshal([]byte(r.(string)), &m)
@@ -167,7 +170,7 @@ func (euw *EtcdUdsWatcher) find(cmd []string) (string, error) {
 func (euw *EtcdUdsWatcher) getSpecifyKey(raw string, cmd []string) string {
 	t := strings.SplitN(cmd[1], "/", 2)
 	switch t[0] {
-	case TypeJson, TypeToml, TypeYaml:
+	case typeJson, typeToml, typeYaml:
 		return gjson.Get(raw, cmd[2]).String()
 	}
 	return raw

@@ -7,6 +7,7 @@ import (
 
 type Config struct{}
 
+//List configurations with params of pagination
 func (c Config) List(start int, limit int, q []string) (interface{}, int64) {
 	configDao := &dao.CenterConfig{}
 	configDao.SetPageParams(start, limit)
@@ -14,6 +15,8 @@ func (c Config) List(start int, limit int, q []string) (interface{}, int64) {
 	configDao.SetSearchMap(dto.CONFIG_SEARCH)
 	return configDao.List()
 }
+
+//Create configuration
 func (c Config) Create(cdto *dto.ConfigAddDto) (int64, error) {
 	configDao := &dao.CenterConfig{
 		Key:  cdto.Key,
@@ -24,6 +27,8 @@ func (c Config) Create(cdto *dto.ConfigAddDto) (int64, error) {
 	}
 	return configDao.Create()
 }
+
+//Update configuration with id
 func (c Config) Update(cdto *dto.ConfigEditDto) error {
 	configDao := &dao.CenterConfig{
 		Id: cdto.Id,
@@ -37,15 +42,10 @@ func (c Config) Update(cdto *dto.ConfigEditDto) error {
 	configDao.Env = cdto.Env
 	configDao.Mod = cdto.Mod
 	configDao.Type = cdto.Type
-	//configDao := &dao.CenterConfig{
-	//	Id: cdto.Id,
-	//	Key: cdto.Key,
-	//	Val: cdto.Val,
-	//	Env: cdto.Env,
-	//	Mod: cdto.Mod,
-	//}
 	return configDao.Update()
 }
+
+//Remove by id
 func (c Config) Delete(cdto *dto.ConfigDelDto) error {
 	configDao := &dao.CenterConfig{
 		Id: cdto.Id,
