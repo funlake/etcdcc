@@ -6,12 +6,12 @@ import (
 )
 
 type CenterConfig struct {
-	Id  int    `json:"id"`
-	Env string `json:"env" orm:"column(env)"`
-	Mod string `json:"mod"`
-	Key string `json:"key"`
-	Val string `json:"val"`
-	Type string `json:"type"`
+	Id      int    `json:"id"`
+	Env     string `json:"env" orm:"column(env)"`
+	Mod     string `json:"mod"`
+	Key     string `json:"key"`
+	Val     string `json:"val"`
+	Type    string `json:"type"`
 	Version string `json:"version"`
 	BaseDao
 }
@@ -61,7 +61,7 @@ func (cc *CenterConfig) Update() error {
 	err := db.Begin()
 	_, err = db.Update(cc)
 	if err == nil {
-		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(),  base64.StdEncoding.EncodeToString([]byte(cc.Val)))
+		_, err = MetaCache.Put(MetaCache{}, cc.formatEtcdKeys(), base64.StdEncoding.EncodeToString([]byte(cc.Val)))
 		if err != nil {
 			log.Error("Etcd put error:" + err.Error())
 			err = db.Rollback()

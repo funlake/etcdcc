@@ -9,15 +9,16 @@ import (
 type ConfigController struct {
 	BaseController
 }
-func (c *ConfigController) List(){
+
+func (c *ConfigController) List() {
 	service := services.Config{}
-	rows,count := service.List(0,20,nil)
-	c.response(RESPOK,"",map[string]interface{}{
-		"result" : rows,
-		"total" : count,
+	rows, count := service.List(0, 20, nil)
+	c.response(RESPOK, "", map[string]interface{}{
+		"result": rows,
+		"total":  count,
 	})
 }
-func (c *ConfigController) Create()  {
+func (c *ConfigController) Create() {
 	cdto := &dto.ConfigAddDto{}
 	if c.parseAndValidate(cdto) {
 		service := services.Config{}
@@ -45,7 +46,7 @@ func (c *ConfigController) Update() {
 
 func (c *ConfigController) Delete() {
 	cdto := &dto.ConfigDelDto{}
-	cdto.Id,_ = strconv.Atoi(c.Ctx.Input.Param(":id"))
+	cdto.Id, _ = strconv.Atoi(c.Ctx.Input.Param(":id"))
 	if c.parseAndValidate(cdto) {
 		service := services.Config{}
 		err := service.Delete(cdto)

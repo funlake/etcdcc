@@ -6,13 +6,15 @@ import (
 	_cache "github.com/funlake/gopkg/cache"
 	"sync"
 )
+
 var (
-	EtcdCache *_cache.TimerCacheEtcd
+	EtcdCache   *_cache.TimerCacheEtcd
 	adapterOnce sync.Once
 )
 
-type Adapter struct {}
-func (e Adapter) Connect(hosts,c,k,ca,sn string)  {
+type Adapter struct{}
+
+func (e Adapter) Connect(hosts, c, k, ca, sn string) {
 	adapterOnce.Do(func() {
 		tlsInfo := transport.TLSInfo{
 			CertFile:      c,
@@ -26,13 +28,13 @@ func (e Adapter) Connect(hosts,c,k,ca,sn string)  {
 		}
 		EtcdCache = _cache.NewTimerCacheEtcd()
 		etcdStore := _cache.NewKvStoreEtcd()
-		err = etcdStore.ConnectWithTls(hosts,tlsConfig)
+		err = etcdStore.ConnectWithTls(hosts, tlsConfig)
 		if err != nil {
 			log.Fatal("Etcd connected failure : " + err.Error())
 		}
 		EtcdCache.SetStore(etcdStore)
 	})
 }
-func (e Adapter) GetMetaCacheHandler() *_cache.TimerCacheEtcd{
+func (e Adapter) GetMetaCacheHandler() *_cache.TimerCacheEtcd {
 	return EtcdCache
 }

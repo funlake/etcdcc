@@ -5,20 +5,21 @@ import (
 	"etcdcc/apiserver/pkg/dto"
 )
 
-type Config struct {}
-func (c Config) List(start int, limit int, q []string)(interface{},int64){
+type Config struct{}
+
+func (c Config) List(start int, limit int, q []string) (interface{}, int64) {
 	configDao := &dao.CenterConfig{}
-	configDao.SetPageParams(start,limit)
+	configDao.SetPageParams(start, limit)
 	configDao.SetSearchCdt(q)
 	configDao.SetSearchMap(dto.CONFIG_SEARCH)
 	return configDao.List()
 }
-func (c Config) Create(cdto *dto.ConfigAddDto)(int64,error){
+func (c Config) Create(cdto *dto.ConfigAddDto) (int64, error) {
 	configDao := &dao.CenterConfig{
-		Key: cdto.Key,
-		Val: cdto.Val,
-		Env: cdto.Env,
-		Mod: cdto.Mod,
+		Key:  cdto.Key,
+		Val:  cdto.Val,
+		Env:  cdto.Env,
+		Mod:  cdto.Mod,
 		Type: cdto.Type,
 	}
 	return configDao.Create()
@@ -28,7 +29,7 @@ func (c Config) Update(cdto *dto.ConfigEditDto) error {
 		Id: cdto.Id,
 	}
 	err := configDao.Find()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	configDao.Key = cdto.Key
@@ -50,9 +51,8 @@ func (c Config) Delete(cdto *dto.ConfigDelDto) error {
 		Id: cdto.Id,
 	}
 	err := configDao.Find()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	return configDao.Delete()
 }
-

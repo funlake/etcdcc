@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"strings"
 )
+
 //切分搜索条件串
 func TransformFieldsCdt(cdt []string, fields map[string]interface{}) map[string]interface{} {
 	var finals = map[string]interface{}{}

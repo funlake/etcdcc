@@ -8,13 +8,15 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 )
+
 var RootCmd = &cobra.Command{Use: "start"}
-func init(){
+
+func init() {
 	RootCmd.AddCommand(apiserver.ServeCommand)
 	RootCmd.AddCommand(file.FileCommand)
 	RootCmd.AddCommand(uds.UdsCommand)
 }
-func Execute()  {
+func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)

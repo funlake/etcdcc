@@ -1,13 +1,17 @@
 package log
-import(
+
+import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"os"
 	"strings"
 )
+
 const LOGTIMEFORMAT = "2006-01-02 15:04:05"
+
 var log zerolog.Logger
-func init()  {
+
+func init() {
 	zerolog.CallerSkipFrameCount = 3
 	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: LOGTIMEFORMAT}
 	output.FormatLevel = func(i interface{}) string {
@@ -34,23 +38,23 @@ func init()  {
 				c = strings.TrimPrefix(c, "/")
 			}
 		}
-		return "| "+c
+		return "| " + c
 	}
 	log = zerolog.New(output).With().Timestamp().Logger()
 
 }
-func Debug(msg string){
+func Debug(msg string) {
 	log.Debug().Caller().Msg(msg)
 }
-func Info(msg string){
+func Info(msg string) {
 	log.Info().Caller().Msg(msg)
 }
-func Warn(msg string){
+func Warn(msg string) {
 	log.Warn().Caller().Msg(msg)
 }
-func Error(msg string){
+func Error(msg string) {
 	log.Error().Caller().Msg(msg)
 }
-func Fatal(msg string){
+func Fatal(msg string) {
 	log.Fatal().Caller().Msg(msg)
 }

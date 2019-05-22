@@ -10,16 +10,18 @@ const (
 	RESPOK = iota
 	RESPFAIL
 )
+
 //type CommonResponse struct {
 //	Code int    `json:"code"`
 //	Msg  string `json:"msg"`
 //	Data interface{} `json:"data"`
 //}
 
-type BaseController struct{
+type BaseController struct {
 	beego.Controller
 }
-func (b *BaseController) response(code int,msg string,data ... interface{}){
+
+func (b *BaseController) response(code int, msg string, data ...interface{}) {
 	//ctx.Response.Header.Add("Content-Type","application/json; charset=utf-8")
 	//res,_ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(&CommonResponse{
 	//	RESPONSE_OK,msg,data,
@@ -41,11 +43,11 @@ func (b *BaseController) response(code int,msg string,data ... interface{}){
 	b.ServeJSON()
 }
 
-func (b *BaseController) ok(data ... interface{})  {
-	b.response(RESPOK,"ok",data[0])
+func (b *BaseController) ok(data ...interface{}) {
+	b.response(RESPOK, "ok", data[0])
 }
 
-func (b *BaseController) fail(msg string){
+func (b *BaseController) fail(msg string) {
 	resp := make(map[string]interface{})
 	resp["code"] = RESPFAIL
 	resp["msg"] = msg
@@ -53,18 +55,18 @@ func (b *BaseController) fail(msg string){
 	b.ServeJSON()
 }
 
-func(b *BaseController)parseAndValidate(obj interface{}) bool{
-	if err := b.ParseForm(obj);err != nil {
+func (b *BaseController) parseAndValidate(obj interface{}) bool {
+	if err := b.ParseForm(obj); err != nil {
 		b.fail(err.Error())
 		return false
 	}
 	valid := &validation.Validation{}
-	if v,_ := valid.Valid(obj);!v{
+	if v, _ := valid.Valid(obj); !v {
 		var errs []string
 		for _, err := range valid.Errors {
-			errs = append(errs,strings.ToLower(strings.Split(err.Key,".")[0]) + ":" + err.Message)
+			errs = append(errs, strings.ToLower(strings.Split(err.Key, ".")[0])+":"+err.Message)
 		}
-		b.fail(strings.Join(errs,","))
+		b.fail(strings.Join(errs, ","))
 		return false
 	}
 	return true
