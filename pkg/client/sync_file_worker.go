@@ -30,6 +30,7 @@ func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 	if err != nil {
 		log.Error(err.Error())
 	}
+
 }
 func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 	ext, rk := getKeyAndExt(key.(string))

@@ -73,6 +73,9 @@ func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
 		}
 		r, err = json.Marshal(tm)
 	}
+	if strings.HasPrefix(prefix, TypeProp+"/") {
+		//strings.Split(io.EOF,string(r))
+	}
 	return r, err
 }
 func (euw *EtcdUdsWatcher) ServeSocket(sockFile string) {
@@ -97,8 +100,6 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 	for {
 		cmd, err := euw.getCmd(fd)
 		if err != nil {
-			log.Error("Get cmd error:" + err.Error())
-			_, _ = fd.Write([]byte("fail," + err.Error()))
 			return
 		}
 		switch strings.ToLower(cmd[0]) {
