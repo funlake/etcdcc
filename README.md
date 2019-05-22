@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/funlake/etcdcc.svg?branch=master)](https://travis-ci.org/funlake/etcdcc)
+[![Go Report Card](https://goreportcard.com/badge/github.com/funlake/etcdcc)](https://goreportcard.com/report/github.com/funlake/etcdcc)
 # etcdcc-apiserver
 #### What's this
 Restful/grpc service for config center base on etcd which's distributed,stable,high performance k/v store storage.
