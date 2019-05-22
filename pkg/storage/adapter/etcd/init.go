@@ -8,12 +8,14 @@ import (
 )
 
 var (
-	EtcdCache   *_cache.TimerCacheEtcd
+	etcdCache   *_cache.TimerCacheEtcd
 	adapterOnce sync.Once
 )
 
+//Etcd adapter for dao layer
 type Adapter struct{}
 
+//Connect to etcd server
 func (e Adapter) Connect(hosts, c, k, ca, sn string) {
 	adapterOnce.Do(func() {
 		tlsInfo := transport.TLSInfo{
@@ -26,15 +28,17 @@ func (e Adapter) Connect(hosts, c, k, ca, sn string) {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		EtcdCache = _cache.NewTimerCacheEtcd()
+		etcdCache = _cache.NewTimerCacheEtcd()
 		etcdStore := _cache.NewKvStoreEtcd()
 		err = etcdStore.ConnectWithTls(hosts, tlsConfig)
 		if err != nil {
 			log.Fatal("Etcd connected failure : " + err.Error())
 		}
-		EtcdCache.SetStore(etcdStore)
+		etcdCache.SetStore(etcdStore)
 	})
 }
+
+//Export the cache instance
 func (e Adapter) GetMetaCacheHandler() *_cache.TimerCacheEtcd {
-	return EtcdCache
+	return etcdCache
 }

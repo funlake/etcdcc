@@ -80,13 +80,6 @@ func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 		sw.setFailConfig(key, value)
 	}
 }
-func (sw *SyncFileWorker) SyncAll(configs sync.Map) {
-	configs.Range(func(key, value interface{}) bool {
-		sw.SyncOne(key, value)
-		return true
-	})
-}
-
 func (sw *SyncFileWorker) setLatestTime(key string, t time.Time) {
 	sw.latestTime.Store(key, t)
 }

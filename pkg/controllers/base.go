@@ -7,29 +7,17 @@ import (
 )
 
 const (
+	//response ok code
 	RESPOK = iota
+	//response fail code
 	RESPFAIL
 )
-
-//type CommonResponse struct {
-//	Code int    `json:"code"`
-//	Msg  string `json:"msg"`
-//	Data interface{} `json:"data"`
-//}
 
 type BaseController struct {
 	beego.Controller
 }
 
 func (b *BaseController) response(code int, msg string, data ...interface{}) {
-	//ctx.Response.Header.Add("Content-Type","application/json; charset=utf-8")
-	//res,_ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(&CommonResponse{
-	//	RESPONSE_OK,msg,data,
-	//})
-	//_,err := ctx.Write(res)
-	//if err != nil{
-	//	log.Error(err.Error())
-	//}
 	resp := make(map[string]interface{})
 	resp["code"] = code
 	resp["msg"] = msg

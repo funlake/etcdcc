@@ -9,9 +9,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+//Mysql adapter for dao layer
 type Adapter struct {
 }
 
+//Connect to mysql server
 func (md Adapter) Connect() {
 	viper.AutomaticEnv()
 	host := viper.Get("MYSQL_HOST")

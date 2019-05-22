@@ -9,15 +9,17 @@ import (
 	"os"
 )
 
-var RootCmd = &cobra.Command{Use: "start"}
+var rootCmd = &cobra.Command{Use: "start"}
 
 func init() {
-	RootCmd.AddCommand(apiserver.ServeCommand)
-	RootCmd.AddCommand(file.FileCommand)
-	RootCmd.AddCommand(uds.UdsCommand)
+	rootCmd.AddCommand(apiserver.ServeCommand)
+	rootCmd.AddCommand(file.FileCommand)
+	rootCmd.AddCommand(uds.UdsCommand)
 }
+
+//Cobra entrance
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}

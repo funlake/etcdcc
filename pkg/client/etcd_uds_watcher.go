@@ -132,7 +132,7 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 				default:
 					c = []byte(r.(string))
 				}
-				_, err = fd.Write(c)
+				_, _ = fd.Write(c)
 			} else {
 				_, _ = fd.Write([]byte("No specify configuration for " + cmd[1]))
 			}
