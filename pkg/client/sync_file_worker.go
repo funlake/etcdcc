@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-//Worker of sync configuration to file
+//SyncFileWorker : Worker of sync configuration to file
 type SyncFileWorker struct {
 	storeDir     string
 	shmfile      string
@@ -25,7 +25,7 @@ type SyncFileWorker struct {
 	failConfigs  sync.Map
 }
 
-//Remove one configuration setting
+//RemoveOne : Remove one configuration setting
 func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 	ext, rk := getKeyAndExt(key.(string))
 	err := os.Remove(sw.storeDir + "/" + rk + "." + ext)
@@ -35,7 +35,7 @@ func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 
 }
 
-//Sync one configuration setting
+//SyncOne : Sync one configuration setting
 func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 	ext, rk := getKeyAndExt(key.(string))
 	memoryFile := "/dev/shm/" + rk

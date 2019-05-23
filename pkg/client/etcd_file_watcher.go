@@ -8,18 +8,21 @@ import (
 	"strings"
 )
 
+//EtcdFileWatcher : file storage watcher for etcd
 type EtcdFileWatcher struct {
 	RetrySeconds int
 	StoreDir     string
 	GeneralWatcher
 }
 
+//KeepEyesOnKey : Watching specific key
 func (ecw *EtcdFileWatcher) KeepEyesOnKey(key string) {}
 
+//KeepEyesOnKeyWithPrefix : Watching specific prefix
 func (ecw *EtcdFileWatcher) KeepEyesOnKeyWithPrefix(module string) {
-	ecw.SetWorker(module)
+	ecw.setWorker(module)
 }
-func (ecw *EtcdFileWatcher) SetWorker(module string) {
+func (ecw *EtcdFileWatcher) setWorker(module string) {
 	storeDir := ecw.StoreDir + "/" + module
 	err := os.MkdirAll(storeDir, 0755)
 	if err != nil {
@@ -48,46 +51,3 @@ func (ecw *EtcdFileWatcher) SetWorker(module string) {
 		syncWorker.RemoveOne(k)
 	})
 }
-
-//func (ecw *EtcdFileWatcher) Init(moduleKey string, callback func(k, v string)) {
-//	log.Info(fmt.Sprintf("Initialize configuration with %s", moduleKey))
-//	adapter := etcd.Adapter{}
-//	allKeys, err := adapter.GetMetaCacheHandler().GetStore().Get(moduleKey+"/", clientv3.WithPrefix())
-//	if err == nil {
-//		for _, e := range allKeys.(*clientv3.GetResponse).Kvs {
-//			sk := strings.TrimPrefix(string(e.Key), moduleKey+"/")
-//			//ecw.ModifyLocal(sk, string(e.Value))
-//			callback(sk, string(e.Value))
-//		}
-//		//syncWorker.SyncAll(ecw.configs)
-//	} else {
-//		log.Error(err.Error())
-//		return
-//	}
-//}
-//func (ecw *EtcdFileWatcher) Watch(key string, putCallback func(k, v string), delCallBack func(mk, k string, cancel context.CancelFunc)) {
-//	adapter := etcd.Adapter{}
-//	ctx, cancel := context.WithCancel(context.Background())
-//	log.Info(fmt.Sprintf("Watching key with %s", key))
-//	//Watching mod's configurations
-//	for v := range adapter.GetMetaCacheHandler().GetStore().Watch(ctx, key, clientv3.WithPrefix()) {
-//		if v.Err() != nil {
-//			continue
-//		}
-//		for _, e := range v.Events {
-//			tp := fmt.Sprintf("%v", e.Type)
-//			sk := strings.TrimPrefix(string(e.Kv.Key), key+"/")
-//			switch tp {
-//			case "PUT":
-//				putCallback(sk, string(e.Kv.Value))
-//			case "DELETE":
-//				delCallBack(key, sk, cancel)
-//			}
-//		}
-//	}
-//	cancel()
-//}
-
-//func (ecw *EtcdFileWatcher) ModifyLocal(key, val string) {
-//	ecw.configs.Store(key, val)
-//}

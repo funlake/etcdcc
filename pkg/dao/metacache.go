@@ -7,10 +7,10 @@ import (
 
 var metaHandler = etcd.Adapter{}
 
-//Meta data storage
+//MetaCache : Meta data storage
 type MetaCache struct{}
 
-//Update key with value
+//Put : Update key with value
 func (e MetaCache) Put(key, val string) (interface{}, error) {
 	return metaHandler.GetMetaCacheHandler().GetStore().Set(key, val)
 }

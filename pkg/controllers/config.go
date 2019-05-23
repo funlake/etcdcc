@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"etcdcc/apiserver/pkg/dao"
 	"etcdcc/apiserver/pkg/dto"
 	"etcdcc/apiserver/pkg/services"
 	"strconv"
@@ -14,7 +15,9 @@ type ConfigController struct {
 //List with pagination params
 func (c *ConfigController) List() {
 	service := services.Config{}
-	rows, count := service.List(0, 20, nil)
+	start, _ := c.GetInt("start", 0)
+	limit, _ := c.GetInt("limit", dao.PAGEROWS)
+	rows, count := service.List(start, limit, nil)
 	c.response(RESPOK, "", map[string]interface{}{
 		"result": rows,
 		"total":  count,

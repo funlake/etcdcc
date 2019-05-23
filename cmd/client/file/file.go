@@ -38,6 +38,7 @@ func init() {
 	}
 }
 
+//FileCommand : file storage watching command
 var FileCommand = &cobra.Command{
 	Use:   "client",
 	Short: "Listening config changes & modified local configuration",

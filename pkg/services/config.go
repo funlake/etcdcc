@@ -45,7 +45,7 @@ func (c Config) Update(cdto *dto.ConfigEditDto) error {
 	return configDao.Update()
 }
 
-//Remove by id
+//Delete : Remove by id
 func (c Config) Delete(cdto *dto.ConfigDelDto) error {
 	configDao := &dao.CenterConfig{
 		Id: cdto.Id,

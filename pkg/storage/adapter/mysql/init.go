@@ -5,15 +5,16 @@ import (
 	"etcdcc/apiserver/pkg/log"
 	"fmt"
 	"github.com/astaxie/beego/orm"
+	//beego need drive import here
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 )
 
-//Mysql adapter for dao layer
+//Adapter : Mysql adapter for dao layer
 type Adapter struct {
 }
 
-//Connect to mysql server
+//Connect : Connect to mysql server
 func (md Adapter) Connect() {
 	viper.AutomaticEnv()
 	host := viper.Get("MYSQL_HOST")

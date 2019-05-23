@@ -5,7 +5,7 @@ import (
 	"etcdcc/apiserver/pkg/log"
 )
 
-//Table structure
+//CenterConfig : Table structure
 type CenterConfig struct {
 	Id      int    `json:"id"`
 	Env     string `json:"env" orm:"column(env)"`
@@ -17,7 +17,7 @@ type CenterConfig struct {
 	BaseDao
 }
 
-//Return table's name in database
+//TableName : Return table's name in database
 func (cc *CenterConfig) TableName() string {
 	return "center_config"
 }
@@ -36,7 +36,7 @@ func (cc *CenterConfig) List() (interface{}, int64) {
 	return rows, c
 }
 
-//Get records by id
+//Find : Get records by id
 func (cc *CenterConfig) Find() error {
 	db := cc.getDb()
 	return db.Read(cc)

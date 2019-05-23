@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-//Max amount of rows returns per page
+//MAXROWS : Max amount of rows returns per page
 const MAXROWS = 999999999
 
-//Normal amount of rows return per page
+//PAGEROWS : Normal amount of rows return per page
 const PAGEROWS = 20
 
 //BaseDao : Wrap of dao

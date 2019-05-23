@@ -1,6 +1,3 @@
-/**
-unix domain socket for easily integration
-*/
 package uds
 
 import (
@@ -9,6 +6,7 @@ import (
 	"etcdcc/apiserver/pkg/storage/adapter/etcd"
 	"github.com/spf13/cobra"
 	"net/http"
+	//need import pprof for debugging
 	_ "net/http/pprof"
 )
 
@@ -44,6 +42,7 @@ func init() {
 	}
 }
 
+//UdsCommand : unix domain socket command
 var UdsCommand = &cobra.Command{
 	Use:   "uds",
 	Short: "Listening config changes & server on unix domain socket",
