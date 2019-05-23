@@ -22,9 +22,9 @@ var (
 func init() {
 	var cp = FileCommand.PersistentFlags()
 	cp.StringVar(&prefix, "prefix", "global", "Name of prefix of current module")
-	cp.StringVar(&etcdCertFile, "c", "/keys/ca.pem", "Cert file for etcd connection")
-	cp.StringVar(&etcdKeyFile, "k", "/keys/ca-key.pem", "Key file for etcd connection")
-	cp.StringVar(&etcdCaFile, "ca", "/keys/ca.crt", "Ca file for etcd connection")
+	cp.StringVar(&etcdCertFile, "c", "/keys/client.pem", "Cert file for etcd connection")
+	cp.StringVar(&etcdKeyFile, "k", "/keys/client-key.pem", "Key file for etcd connection")
+	cp.StringVar(&etcdCaFile, "ca", "/keys/ca.pem", "Ca file for etcd connection")
 	cp.StringVar(&etcdServerName, "sn", "", "ServerName for ssl verification")
 	cp.StringVar(&etcdHosts, "hosts", "127.0.0.1:2379", "Hosts of etcd server")
 	cp.IntVar(&retrySeconds, "retrySeconds", 3, "Fails retry in ? seconds")
