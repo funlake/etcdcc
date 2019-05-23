@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-//Controller of configuration
+//ConfigController : controller of configuration
 type ConfigController struct {
 	BaseController
 }

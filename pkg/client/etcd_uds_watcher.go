@@ -25,16 +25,16 @@ const (
 
 var readBuffer = make([]byte, 1024)
 
-//Unix domain socket watcher for etcd
+//EtcdUdsWatcher : Unix domain socket watcher for etcd
 type EtcdUdsWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
 }
 
-//Watching specific key
+//KeepEyesOnKey : Watching specific key
 func (euw *EtcdUdsWatcher) KeepEyesOnKey(key string) {}
 
-//Watch etcd with prefix
+//KeepEyesOnKeyWithPrefix : Watch etcd with prefix
 func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 	euw.Init(prefix, func(k, v string) {
 		euw.saveLocal(k, v)
@@ -80,7 +80,7 @@ func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
 	return r, err
 }
 
-//Serve unix socket for applications
+//ServeSocket : Serve unix socket for applications
 func (euw *EtcdUdsWatcher) ServeSocket(sockFile string) {
 	_ = os.Remove(sockFile)
 	ln, err := net.Listen("unix", sockFile)

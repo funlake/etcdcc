@@ -13,7 +13,7 @@ const (
 	RESPFAIL
 )
 
-//Wrap of some base actions of controller
+//BaseController : Wrap of some base actions of controller
 type BaseController struct {
 	beego.Controller
 }

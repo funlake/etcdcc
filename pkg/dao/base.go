@@ -12,7 +12,7 @@ const MAXROWS = 999999999
 //Normal amount of rows return per page
 const PAGEROWS = 20
 
-//Wrap of dao
+//BaseDao : Wrap of dao
 type BaseDao struct {
 	CreatedTime time.Time `orm:"auto_now_add;type(datetime)" json:"created_time"`
 	UpdatedTime time.Time `orm:"auto_now;type(datetime)" json:"updated_time"`
@@ -44,18 +44,18 @@ func (bd *BaseDao) filterSearch(qs orm.QuerySeter, q []string) orm.QuerySeter {
 	return qs
 }
 
-//Set search conditions
+//SetSearchMap : Set search conditions
 func (bd *BaseDao) SetSearchMap(sm map[string]interface{}) {
 	bd.searchMap = sm
 }
 
-//Set pagination
+//SetPageParams : Set pagination params
 func (bd *BaseDao) SetPageParams(start int, limit int) {
 	bd.start = start
 	bd.limit = limit
 }
 
-//Set search conditions
+//SetSearchCdt : Set search conditions
 func (bd *BaseDao) SetSearchCdt(q []string) {
 	bd.q = q
 }

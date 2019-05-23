@@ -44,27 +44,27 @@ func init() {
 
 }
 
-//Level 0
+//Debug : Level 0
 func Debug(msg string) {
 	log.Debug().Caller().Msg(msg)
 }
 
-//Level 1
+//Info : Level 1
 func Info(msg string) {
 	log.Info().Caller().Msg(msg)
 }
 
-//Level 2
+//Warn : Level 2
 func Warn(msg string) {
 	log.Warn().Caller().Msg(msg)
 }
 
-//Level 3
+//Error : Level 3
 func Error(msg string) {
 	log.Error().Caller().Msg(msg)
 }
 
-//Level 4
+//Fatal : Level 4
 func Fatal(msg string) {
 	log.Fatal().Caller().Msg(msg)
 }

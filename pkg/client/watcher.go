@@ -9,26 +9,22 @@ import (
 	"strings"
 )
 
-// @Summary
-// 1. 同步器用job worker异步阻塞模式，只开一个工作协程，避免写锁,协程panic重启由类库自动实现
-// 2. 定时重试
-// 3. 只兼容linux,一些命令用linux原生执行(通用后期再考虑)
+// Watcher : Watching key & value change
 type Watcher interface {
 	KeepEyesOnKey(key string)
 	KeepEyesOnKeyWithPrefix(module string)
-	//Init(moduleKey string, callback func(k, v string))
-	//Watch(key string, putCallback func(k, v string), delCallBack func(mk, k string, cancel context.CancelFunc))
 }
 
+//GeneralWatcher : base struct of watcher
 type GeneralWatcher struct{}
 
-//Specific key watcher
+//KeepEyesOnKey : Specific key watcher
 func (gw *GeneralWatcher) KeepEyesOnKey(key string) {}
 
-//Specific prefix watcher
+//KeepEyesOnKeyWithPrefix : Specific prefix watcher
 func (gw *GeneralWatcher) KeepEyesOnKeyWithPrefix(module string) {}
 
-//Initialize configurations from storage while server's up
+//Init : Initialize configurations from storage while server's up
 func (gw *GeneralWatcher) Init(prefix string, callback func(k, v string)) {
 	log.Info(fmt.Sprintf("Initialize configuration for prefix %s", prefix))
 	adapter := etcd.Adapter{}
@@ -36,17 +32,15 @@ func (gw *GeneralWatcher) Init(prefix string, callback func(k, v string)) {
 	if err == nil {
 		for _, e := range allKeys.(*clientv3.GetResponse).Kvs {
 			sk := strings.TrimPrefix(string(e.Key), prefix+"/")
-			//ecw.ModifyLocal(sk, string(e.Value))
 			callback(sk, string(e.Value))
 		}
-		//syncWorker.SyncAll(ecw.configs)
 	} else {
 		log.Error(err.Error())
 		return
 	}
 }
 
-//Watching configuration's changes
+//Watch : Watching configuration's changes
 func (gw *GeneralWatcher) Watch(key string, putCallback func(k, v string), delCallBack func(mk, k string, cancel context.CancelFunc)) {
 	adapter := etcd.Adapter{}
 	ctx, cancel := context.WithCancel(context.Background())
