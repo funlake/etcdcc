@@ -6,9 +6,13 @@ import (
 	"time"
 )
 
+//Max amount of rows returns per page
 const MAXROWS = 999999999
+
+//Normal amount of rows return per page
 const PAGEROWS = 20
 
+//Wrap of dao
 type BaseDao struct {
 	CreatedTime time.Time `orm:"auto_now_add;type(datetime)" json:"created_time"`
 	UpdatedTime time.Time `orm:"auto_now;type(datetime)" json:"updated_time"`
@@ -27,23 +31,11 @@ type BaseDao struct {
 //@link
 // https://github.com/astaxie/beego/issues/1524
 func (bd *BaseDao) getDb() orm.Ormer {
-	//return onceOrm
 	return orm.NewOrm()
 }
 
-//func (bd *BaseDao) fetchRows(qs orm.QuerySeter) ([]orm.Params,int64) {
-//	var c int64
-//	var rows []orm.Params
-//	qs = bd.filterSearch(qs,bd.q,bd.searchMap)
-//	_, err := qs.Limit(bd.limit, bd.start).Values(&rows)
-//	if err == nil {
-//		c, _ = qs.Count()
-//	}
-//	return rows,c
-//}
-
+//Extends q for more search conditions
 func (bd *BaseDao) filterSearch(qs orm.QuerySeter, q []string) orm.QuerySeter {
-	//后期加入搜索条件可利用q参数
 	if len(q) > 0 {
 		for k, v := range utils.TransformFieldsCdt(q, bd.searchMap) {
 			qs = utils.TransformQset(qs, k, v.(string))
@@ -52,18 +44,18 @@ func (bd *BaseDao) filterSearch(qs orm.QuerySeter, q []string) orm.QuerySeter {
 	return qs
 }
 
-//设置搜索条件与数据表字段自建的关联关系
+//Set search conditions
 func (bd *BaseDao) SetSearchMap(sm map[string]interface{}) {
 	bd.searchMap = sm
 }
 
-//设置分页参数
+//Set pagination
 func (bd *BaseDao) SetPageParams(start int, limit int) {
 	bd.start = start
 	bd.limit = limit
 }
 
-//设置搜索条件
+//Set search conditions
 func (bd *BaseDao) SetSearchCdt(q []string) {
 	bd.q = q
 }

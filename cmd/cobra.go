@@ -17,7 +17,7 @@ func init() {
 	rootCmd.AddCommand(uds.UdsCommand)
 }
 
-//Cobra entrance
+//Execute : Cobra entrance
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

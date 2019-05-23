@@ -7,12 +7,13 @@ import (
 )
 
 const (
-	//response ok code
+	//RESPOK : response ok code
 	RESPOK = iota
-	//response fail code
+	//RESPFAIL : response fail code
 	RESPFAIL
 )
 
+//Wrap of some base actions of controller
 type BaseController struct {
 	beego.Controller
 }
