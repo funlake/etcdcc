@@ -5,6 +5,7 @@ import (
 	"etcdcc/apiserver/pkg/log"
 )
 
+//Table structure
 type CenterConfig struct {
 	Id      int    `json:"id"`
 	Env     string `json:"env" orm:"column(env)"`
@@ -16,11 +17,12 @@ type CenterConfig struct {
 	BaseDao
 }
 
+//Return table's name in database
 func (cc *CenterConfig) TableName() string {
 	return "center_config"
 }
 
-//如果需要分页，可先行设置SetPageParams,搜索等需设置 SetSearchMap,SetSearchCdt
+//List with params of pagination & search conditions
 func (cc *CenterConfig) List() (interface{}, int64) {
 	db := cc.getDb()
 	qs := db.QueryTable(cc.TableName())
@@ -33,11 +35,14 @@ func (cc *CenterConfig) List() (interface{}, int64) {
 	}
 	return rows, c
 }
+
+//Get records by id
 func (cc *CenterConfig) Find() error {
 	db := cc.getDb()
 	return db.Read(cc)
 }
 
+//Create record according to dto
 func (cc *CenterConfig) Create() (int64, error) {
 	var insertId int64
 	db := cc.getDb()
@@ -56,6 +61,8 @@ func (cc *CenterConfig) Create() (int64, error) {
 	}
 	return insertId, err
 }
+
+//Update record according to dto
 func (cc *CenterConfig) Update() error {
 	db := cc.getDb()
 	err := db.Begin()
@@ -73,6 +80,8 @@ func (cc *CenterConfig) Update() error {
 	}
 	return err
 }
+
+//Delete record according to dto
 func (cc *CenterConfig) Delete() error {
 	db := cc.getDb()
 	err := db.Begin()

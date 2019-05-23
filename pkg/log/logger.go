@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-const LOGTIMEFORMAT = "2006-01-02 15:04:05"
+const timeFormat = "2006-01-02 15:04:05"
 
 var log zerolog.Logger
 
 func init() {
 	zerolog.CallerSkipFrameCount = 3
-	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: LOGTIMEFORMAT}
+	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: timeFormat}
 	output.FormatLevel = func(i interface{}) string {
 		return strings.ToUpper(fmt.Sprintf(" | %s", i))
 	}
@@ -43,18 +43,28 @@ func init() {
 	log = zerolog.New(output).With().Timestamp().Logger()
 
 }
+
+//Level 0
 func Debug(msg string) {
 	log.Debug().Caller().Msg(msg)
 }
+
+//Level 1
 func Info(msg string) {
 	log.Info().Caller().Msg(msg)
 }
+
+//Level 2
 func Warn(msg string) {
 	log.Warn().Caller().Msg(msg)
 }
+
+//Level 3
 func Error(msg string) {
 	log.Error().Caller().Msg(msg)
 }
+
+//Level 4
 func Fatal(msg string) {
 	log.Fatal().Caller().Msg(msg)
 }

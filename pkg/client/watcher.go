@@ -22,8 +22,13 @@ type Watcher interface {
 
 type GeneralWatcher struct{}
 
-func (gw *GeneralWatcher) KeepEyesOnKey(key string)              {}
+//Specific key watcher
+func (gw *GeneralWatcher) KeepEyesOnKey(key string) {}
+
+//Specific prefix watcher
 func (gw *GeneralWatcher) KeepEyesOnKeyWithPrefix(module string) {}
+
+//Initialize configurations from storage while server's up
 func (gw *GeneralWatcher) Init(prefix string, callback func(k, v string)) {
 	log.Info(fmt.Sprintf("Initialize configuration for prefix %s", prefix))
 	adapter := etcd.Adapter{}
@@ -40,6 +45,8 @@ func (gw *GeneralWatcher) Init(prefix string, callback func(k, v string)) {
 		return
 	}
 }
+
+//Watching configuration's changes
 func (gw *GeneralWatcher) Watch(key string, putCallback func(k, v string), delCallBack func(mk, k string, cancel context.CancelFunc)) {
 	adapter := etcd.Adapter{}
 	ctx, cancel := context.WithCancel(context.Background())
