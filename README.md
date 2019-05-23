@@ -60,8 +60,8 @@ data+%3d+%5b+%5b%22gamma%22%2c+%22delta%22%5d%2c+%5b1%2c+2%5d+%5d'
 curl -X POST -d "key=tm&mod=abc&env=dev&val=$toml&type=toml" -H "Content-Type: application/x-www-form-urlencoded" http://127.0.0.1/config
 $ ./setup.sh
 ```
-> Application search by unix socket
-> you can make it run continually,shell script or something else? you decide
+> Application get configuration by unix socket
+> you can make it continually running,shell script or something else? you decide
 ```
 $ echo -en "get toml/tm" | nc  -U /run/etcdcc.sock
 ok,{"clients":{"data":[["gamma","delta"],[1,2]]},"database":{"connection_max":5000,"enabled":true,"ports":[8001,8001,8002],"server":"192.168.1.1"},"owner":{"bio":"GitHub Cofounder \u0026 CEO\nLikes tater tots and beer.","dob":"1979-05-27T07:32:00Z","name":"Tom Preston-Werner","organization":"GitHub"},"servers":{"alpha":{"dc":"eqdc10","ip":"10.0.0.1"},"beta":{"dc":"eqdc10","ip":"10.0.0.2"}},"title":"TOML Example"}
