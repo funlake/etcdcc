@@ -14,6 +14,7 @@ import (
 	"time"
 )
 
+//Worker of sync configuration to file
 type SyncFileWorker struct {
 	storeDir     string
 	shmfile      string
@@ -24,6 +25,7 @@ type SyncFileWorker struct {
 	failConfigs  sync.Map
 }
 
+//Remove one configuration setting
 func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 	ext, rk := getKeyAndExt(key.(string))
 	err := os.Remove(sw.storeDir + "/" + rk + "." + ext)
@@ -32,11 +34,11 @@ func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 	}
 
 }
+
+//Sync one configuration setting
 func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 	ext, rk := getKeyAndExt(key.(string))
 	memoryFile := "/dev/shm/" + rk
-	//mfs := strings.Split(sw.shmfile, "_")
-	//modFile := mfs[len(mfs)-1]
 	in := sw.dispatcher.Put(jobworker.NewSimpleJob(func() {
 		//1.Read and write
 		fh, err := os.OpenFile(memoryFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
@@ -56,11 +58,9 @@ func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 		if err == nil {
 			//2.Move
 			p := time.Now().Format("200601021504")
-			//err = runCtxCommand("cp", "-f", memoryFile, "/tmp/config_"+rk+"_"+p)
 			err = sw.moveFile(memoryFile, "/tmp/config_"+rk+"_"+p)
 			if err == nil {
 				//3.Symlink
-				//err = runCtxCommand("ln", "-sfT", "/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
 				err = sw.linkFile("/tmp/config_"+rk+"_"+p, sw.storeDir+"/"+rk+"."+ext)
 				if err == nil {
 					sw.setLatestTime(rk, time.Now())
@@ -100,6 +100,7 @@ func (sw *SyncFileWorker) linkFile(source, target string) error {
 	return runCtxCommand("ln", "-sfT", source, target)
 }
 
+//Retry implements
 func (sw *SyncFileWorker) Retry() {
 	tm := timer.NewTimer()
 	tm.Ready()
