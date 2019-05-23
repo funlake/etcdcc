@@ -20,7 +20,7 @@ func (md Adapter) Connect() {
 	host := viper.Get("MYSQL_HOST")
 	user := viper.Get("MYSQL_USERNAME")
 	pwd := viper.Get("MYSQL_PASSWORD")
-	db := viper.Get("MYSQL_DB_CC")
+	db := viper.Get("MYSQL_DB")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&&loc=Local", user, pwd, host, db)
 	err := orm.RegisterDataBase("default", "mysql", dsn)
 	if err != nil {
