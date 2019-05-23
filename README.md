@@ -11,18 +11,25 @@ Receive http/grpc request,and save/del/update specific k/v record in etcd3
 Hihgly depends on  etcd ,see how etcd proved it [here](https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/performance.md) ,
 100k write request / 50k qps,this's way beyond what we expected
 
-#### Run it
+#### Run & Test
 ```
+GO111MODULE=on go test ./...
 GO111MODULE=on go build -o etcdcc
 ./etcdcc --h #Ssl verification is needed,so you must specify --k,--c,--ca for etcd connection
 #server
 ./etcdcc server.start --hosts=https://127.0.0.1:2479
 #file client,see files in /opt/dev/abc
 ./etcdcc client.file --hosts=https://127.0.0.1:2379 --prefix=dev/abc --storeDir=/opt
-#unix socket client,serve unix socket server for application
+#unix socket client,serve unix socket for application
 #command for application to request unix socket is just : get [config type]/[config name] [specific key]
 ./etcdcc client.sock --hosts=https://127.0.0.1:2379 --prefix=dev/abc --sock=/run/etcdcc.sock
-
+```
+###### unix socket example
+```
+$ echo -en "get toml/tm" | nc  -U /run/etcdcc.sock
+ok,{"clients":{"data":[["gamma","delta"],[1,2]]},"database":{"connection_max":5000,"enabled":true,"ports":[8001,8001,8002],"server":"192.168.1.1"},"owner":{"bio":"GitHub Cofounder \u0026 CEO\nLikes tater tots and beer.","dob":"1979-05-27T07:32:00Z","name":"Tom Preston-Werner","organization":"GitHub"},"servers":{"alpha":{"dc":"eqdc10","ip":"10.0.0.1"},"beta":{"dc":"eqdc10","ip":"10.0.0.2"}},"title":"TOML Example"}
+$ echo -en "get toml/tm owner.name" | nc  -U /run/etcdcc.sock
+ok,Tom Preston-Werner
 ```
 ##### By Docker
 ##### Compile and run
