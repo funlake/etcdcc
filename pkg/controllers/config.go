@@ -6,10 +6,12 @@ import (
 	"strconv"
 )
 
+//Controller of configuration
 type ConfigController struct {
 	BaseController
 }
 
+//List with pagination params
 func (c *ConfigController) List() {
 	service := services.Config{}
 	rows, count := service.List(0, 20, nil)
@@ -18,6 +20,8 @@ func (c *ConfigController) List() {
 		"total":  count,
 	})
 }
+
+//Create by dto
 func (c *ConfigController) Create() {
 	cdto := &dto.ConfigAddDto{}
 	if c.parseAndValidate(cdto) {
@@ -31,6 +35,7 @@ func (c *ConfigController) Create() {
 	}
 }
 
+//Update by dto
 func (c *ConfigController) Update() {
 	cdto := &dto.ConfigEditDto{}
 	if c.parseAndValidate(cdto) {
@@ -44,6 +49,7 @@ func (c *ConfigController) Update() {
 	}
 }
 
+//Delete by dto
 func (c *ConfigController) Delete() {
 	cdto := &dto.ConfigDelDto{}
 	cdto.Id, _ = strconv.Atoi(c.Ctx.Input.Param(":id"))
