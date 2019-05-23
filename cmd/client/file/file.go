@@ -39,7 +39,7 @@ func init() {
 
 //FileCommand : file storage watching command
 var FileCommand = &cobra.Command{
-	Use:   "file",
+	Use:   "client.file",
 	Short: "Listening config changes & modified local configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)

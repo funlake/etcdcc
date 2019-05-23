@@ -23,7 +23,7 @@ var (
 
 //ServeCommand : server command for configurations curd
 var ServeCommand = &cobra.Command{
-	Use:   "start restful server",
+	Use:   "server.start",
 	Short: "Run etcd admin restful api",
 	Run: func(cmd *cobra.Command, args []string) {
 		zerolog.SetGlobalLevel(zerolog.Level(logLevel))

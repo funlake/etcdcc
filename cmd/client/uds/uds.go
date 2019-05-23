@@ -44,7 +44,7 @@ func init() {
 
 //UdsCommand : unix domain socket command
 var UdsCommand = &cobra.Command{
-	Use:   "uds",
+	Use:   "client.sock",
 	Short: "Listening config changes & server on unix domain socket",
 	Run: func(cmd *cobra.Command, args []string) {
 		if withPprof {

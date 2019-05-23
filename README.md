@@ -13,14 +13,16 @@ Hihgly depends on  etcd ,see how etcd proved it [here](https://github.com/etcd-i
 
 #### Run it
 ```
-GO111MODULE=on go build
-./apiserver --h
+GO111MODULE=on go build -o etcdcc
+./etcdcc --h #Ssl verification is needed,so you must specify --k,--c,--ca for etcd connection
 #server
-./apiserver start --hosts=https://127.0.0.1:2379
+./etcdcc server.start --hosts=https://127.0.0.1:2479
 #file client,see files in /opt/dev/abc
-./apiserver file --hosts=https://127.0.0.1:2379 --prefix=dev/abc --storeDir=/opt
-#uds client,default socket is /run/etcdcc.sock
-./apiserver uds --hosts=https://127.0.0.1:2379 --prefix=dev/act
+./etcdcc client.file --hosts=https://127.0.0.1:2379 --prefix=dev/abc --storeDir=/opt
+#unix socket client,serve unix socket server for application
+#command for application to request unix socket is just : get [config type]/[config name] [specific key]
+./etcdcc client.sock --hosts=https://127.0.0.1:2379 --prefix=dev/abc --sock=/run/etcdcc.sock
+
 ```
 ##### By Docker
 ##### Compile and run
