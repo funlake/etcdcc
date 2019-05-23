@@ -16,7 +16,7 @@ Hihgly depends on  etcd ,see how etcd proved it [here](https://github.com/etcd-i
 GO111MODULE=on go build
 ./apiserver --h
 #server
-./apiserver --hosts=https://127.0.0.1:2379
+./apiserver start --hosts=https://127.0.0.1:2379
 #file client,see files in /opt/dev/abc
 ./apiserver file --hosts=https://127.0.0.1:2379 --prefix=dev/abc --storeDir=/opt
 #uds client,default socket is /run/etcdcc.sock

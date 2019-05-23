@@ -2,6 +2,8 @@ package client
 
 import (
 	"encoding/base64"
+	"fmt"
+	"github.com/pkg/errors"
 	"testing"
 )
 
@@ -84,7 +86,7 @@ service:
 `)))
 }
 
-type testCases struct {
+type testCase struct {
 	cmd  []string
 	want string
 }
@@ -92,7 +94,7 @@ type testCases struct {
 func TestEtcdUdsWatcher_Find(t *testing.T) {
 	initData()
 
-	for _, ts := range []testCases{
+	for _, ts := range []testCase{
 		{
 			cmd:  []string{"get", "json/lake", "a.b.c"},
 			want: "hello",
@@ -122,7 +124,9 @@ func TestEtcdUdsWatcher_Find(t *testing.T) {
 		if err != nil {
 			t.Error(err.Error())
 		} else {
-			t.Log(val)
+			if val != ts.want {
+				t.Error(errors.New(fmt.Sprintf("Expect %s,get %s", ts.want, val)))
+			}
 		}
 	}
 }

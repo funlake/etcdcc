@@ -4,7 +4,6 @@ import (
 	"etcdcc/apiserver/pkg/client"
 	"etcdcc/apiserver/pkg/log"
 	"etcdcc/apiserver/pkg/storage/adapter/etcd"
-	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -40,12 +39,12 @@ func init() {
 
 //FileCommand : file storage watching command
 var FileCommand = &cobra.Command{
-	Use:   "client",
+	Use:   "file",
 	Short: "Listening config changes & modified local configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
 		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds, StoreDir: storeDir}
-		wc.KeepEyesOnKeyWithPrefix(fmt.Sprintf("dev/%s", prefix))
+		wc.KeepEyesOnKeyWithPrefix(prefix)
 	},
 }
