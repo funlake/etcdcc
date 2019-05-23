@@ -45,10 +45,9 @@ func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 		if err != nil {
 			log.Error("File not open correctly:" + err.Error())
 			return
-		} else {
-			vb, _ := base64.StdEncoding.DecodeString(value.(string))
-			_, err = fh.Write(vb)
 		}
+		vb, _ := base64.StdEncoding.DecodeString(value.(string))
+		_, err = fh.Write(vb)
 		defer func() {
 			err := fh.Close()
 			if err != nil {

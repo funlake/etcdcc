@@ -5,6 +5,7 @@ import (
 	"etcdcc/apiserver/pkg/dto"
 )
 
+//Config struct
 type Config struct{}
 
 //List configurations with params of pagination

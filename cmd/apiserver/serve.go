@@ -20,6 +20,7 @@ var (
 	logLevel       uint8
 )
 
+//ServeCommand : server command for configurations curd
 var ServeCommand = &cobra.Command{
 	Use:   "start restful server",
 	Short: "Run etcd admin restful api",

@@ -12,7 +12,7 @@ var (
 	adapterOnce sync.Once
 )
 
-//Etcd adapter for dao layer
+//Adapter : Etcd adapter for dao layer
 type Adapter struct{}
 
 //Connect to etcd server
@@ -38,7 +38,7 @@ func (e Adapter) Connect(hosts, c, k, ca, sn string) {
 	})
 }
 
-//Export the cache instance
+//GetMetaCacheHandler : Export the cache instance
 func (e Adapter) GetMetaCacheHandler() *_cache.TimerCacheEtcd {
 	return etcdCache
 }
