@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"etcdcc/apiserver/pkg/log"
+	//beego need import routes here
 	_ "etcdcc/apiserver/pkg/routes"
 	"etcdcc/apiserver/pkg/storage/adapter/etcd"
 	"etcdcc/apiserver/pkg/storage/adapter/mysql"
