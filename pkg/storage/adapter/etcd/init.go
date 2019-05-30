@@ -1,7 +1,7 @@
 package etcd
 
 import (
-	"etcdcc/apiserver/pkg/log"
+	"etcdcc/pkg/log"
 	"github.com/coreos/etcd/pkg/transport"
 	_cache "github.com/funlake/gopkg/cache"
 	"sync"

@@ -2,7 +2,7 @@ package main
 
 import (
 	//"github.com/spf13/cobra/cobra/cmd"
-	"etcdcc/apiserver/cmd"
+	"etcdcc/cmd"
 )
 
 func main() {

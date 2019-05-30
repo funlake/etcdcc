@@ -2,8 +2,8 @@ package client
 
 import (
 	"context"
-	"etcdcc/apiserver/pkg/log"
-	"etcdcc/apiserver/pkg/storage/adapter/etcd"
+	"etcdcc/pkg/log"
+	"etcdcc/pkg/storage/adapter/etcd"
 	"fmt"
 	"github.com/coreos/etcd/clientv3"
 	"strings"

@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"etcdcc/apiserver/pkg/dao"
-	"etcdcc/apiserver/pkg/dto"
-	"etcdcc/apiserver/pkg/services"
+	"etcdcc/pkg/dao"
+	"etcdcc/pkg/dto"
+	"etcdcc/pkg/services"
 	"strconv"
 )
 

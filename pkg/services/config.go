@@ -1,8 +1,8 @@
 package services
 
 import (
-	"etcdcc/apiserver/pkg/dao"
-	"etcdcc/apiserver/pkg/dto"
+	"etcdcc/pkg/dao"
+	"etcdcc/pkg/dto"
 )
 
 //Config struct

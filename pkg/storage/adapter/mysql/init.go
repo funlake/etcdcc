@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	"etcdcc/apiserver/pkg/dao"
-	"etcdcc/apiserver/pkg/log"
+	"etcdcc/pkg/dao"
+	"etcdcc/pkg/log"
 	"fmt"
 	"github.com/astaxie/beego/orm"
 	//beego need drive import here

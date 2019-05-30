@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"etcdcc/apiserver/pkg/log"
+	"etcdcc/pkg/log"
 	"github.com/funlake/gopkg/jobworker"
 	"os"
 	"strings"

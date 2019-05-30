@@ -1,9 +1,9 @@
 package file
 
 import (
-	"etcdcc/apiserver/pkg/client"
-	"etcdcc/apiserver/pkg/log"
-	"etcdcc/apiserver/pkg/storage/adapter/etcd"
+	"etcdcc/pkg/client"
+	"etcdcc/pkg/log"
+	"etcdcc/pkg/storage/adapter/etcd"
 	"github.com/spf13/cobra"
 )
 

@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"encoding/base64"
-	"etcdcc/apiserver/pkg/log"
+	"etcdcc/pkg/log"
 	"fmt"
 	"github.com/funlake/gopkg/jobworker"
 	"github.com/funlake/gopkg/timer"

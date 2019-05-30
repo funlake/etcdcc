@@ -6,10 +6,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"etcdcc/apiserver/pkg/log"
+	"etcdcc/pkg/log"
 	"github.com/BurntSushi/toml"
 	"github.com/ghodss/yaml"
 	"github.com/tidwall/gjson"
+	"github.com/zieckey/goini"
 	"net"
 	"os"
 	"strings"
@@ -75,7 +76,11 @@ func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
 		r, err = json.Marshal(tm)
 	}
 	if strings.HasPrefix(prefix, typeProp+"/") {
-		//strings.Split(io.EOF,string(r))
+		ini := goini.New()
+		err = ini.Parse(r, "\n", "=")
+		if err == nil {
+			r, err = json.Marshal(ini.GetAll())
+		}
 	}
 	return r, err
 }

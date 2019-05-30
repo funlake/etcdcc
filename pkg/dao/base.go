@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"etcdcc/apiserver/pkg/utils"
+	"etcdcc/pkg/utils"
 	"github.com/astaxie/beego/orm"
 	"time"
 )

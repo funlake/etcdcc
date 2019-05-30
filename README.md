@@ -79,4 +79,13 @@ curl -X PUT -d "id=1&key=tm&mod=abc&env=dev&val=$toml&type=toml" -H "Content-Typ
 $ ./update.sh
 ```
 ##### By Docker
+```
+#Inside project directory
+docker built -t etcdcc .
+docker run etcdcc:latest server.start \
+-e ETCD_HOSTS="https://etcd1:2379,https://etcd2:2379,https://etcd3:2379"
+/keys:/keys \
+--hosts="${ETCD_HOSTS}" \
+--port=8081
+```
 ##### Compile and run

@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"etcdcc/apiserver/cmd/apiserver"
-	"etcdcc/apiserver/cmd/client/file"
-	"etcdcc/apiserver/cmd/client/uds"
+	"etcdcc/cmd/client/file"
+	"etcdcc/cmd/client/uds"
+	"etcdcc/cmd/server"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
@@ -12,7 +12,7 @@ import (
 var rootCmd = &cobra.Command{Use: "start"}
 
 func init() {
-	rootCmd.AddCommand(apiserver.ServeCommand)
+	rootCmd.AddCommand(server.ServeCommand)
 	rootCmd.AddCommand(file.FileCommand)
 	rootCmd.AddCommand(uds.UdsCommand)
 }

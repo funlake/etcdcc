@@ -2,7 +2,7 @@ package dao
 
 import (
 	"encoding/base64"
-	"etcdcc/apiserver/pkg/log"
+	"etcdcc/pkg/log"
 )
 
 //CenterConfig : Table structure

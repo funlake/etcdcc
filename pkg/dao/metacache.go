@@ -2,7 +2,7 @@ package dao
 
 import (
 	"errors"
-	"etcdcc/apiserver/pkg/storage/adapter/etcd"
+	"etcdcc/pkg/storage/adapter/etcd"
 )
 
 var metaHandler = etcd.Adapter{}

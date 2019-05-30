@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"etcdcc/apiserver/pkg/controllers"
+	"etcdcc/pkg/controllers"
 	"github.com/astaxie/beego"
 )
 
