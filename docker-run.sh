@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $1 == "server.start" ]; then
-docker run -v /keys-test:/keys -p 8081:80 \
+docker run -p 8081:80 \
 -e MYSQL_HOST=$MYSQL_HOST \
 -e MYSQL_USERNAME=$MYSQL_USERNAME \
 -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
@@ -10,7 +10,7 @@ docker run -v /keys-test:/keys -p 8081:80 \
 etcdcc:latest $1 \
 --hosts="https://etcd1:2379,https://etcd2:2379,https://etcd3:2379"
 else
-docker run -v /keys-test:/keys \
+docker run \
 -v /run/etcdcc:/run/etcdcc \
 -e MYSQL_HOST=$MYSQL_HOST \
 -e MYSQL_USERNAME=$MYSQL_USERNAME \
