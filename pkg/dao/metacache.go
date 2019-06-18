@@ -24,7 +24,7 @@ func (e MetaCache) Delete(key string) (interface{}, error) {
 func (e MetaCache) Get(key string) (interface{}, error) {
 	val, err := metaHandler.GetMetaCacheHandler().Get("", key, 0)
 	if err == nil && val == "" {
-		err = errors.New("Value Not set")
+		err = errors.New("Value not set")
 	}
 	return val, err
 }
