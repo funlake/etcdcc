@@ -2,8 +2,8 @@ package client
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
-	"github.com/pkg/errors"
 	"testing"
 )
 
