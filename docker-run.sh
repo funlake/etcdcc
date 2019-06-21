@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $1 == "server.start" ]]; 
 then
-docker run -p 8081:80 \
+docker run -p 8088:80 \
 -e MYSQL_HOST=$MYSQL_HOST \
 -e MYSQL_USERNAME=$MYSQL_USERNAME \
 -e MYSQL_PASSWORD=$MYSQL_PASSWORD \

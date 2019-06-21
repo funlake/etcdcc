@@ -60,7 +60,9 @@ func (euw *EtcdUdsWatcher) saveLocal(k, v string) {
 	}
 }
 func (euw *EtcdUdsWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
-	var err error
+	var (
+		err error
+	)
 	if strings.HasPrefix(prefix, typeYaml+"/") {
 		r, err = yaml.YAMLToJSON(r)
 		if err != nil {
