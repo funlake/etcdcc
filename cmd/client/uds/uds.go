@@ -62,8 +62,13 @@ var UdsCommand = &cobra.Command{
 		}
 		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server[uds]")
-		wc := &client.EtcdUdsWatcher{Tc:etcd.GetMetaCacheHandler()}
-		go wc.ServeSocket(sockFile)
-		wc.KeepEyesOnKeyWithPrefix(prefix)
+		wch := &client.EtcdMemoryWatcher{Tc:etcd.GetMetaCacheHandler()}
+		//go wc.ServeSocket(sockFile)
+		uc := &client.UnixSocket{
+			Wch: wch,
+		}
+		go uc.Serve(sockFile)
+		wch.KeepEyesOnKeyWithPrefix(prefix)
 	},
+
 }

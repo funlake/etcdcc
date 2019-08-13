@@ -9,7 +9,12 @@ import (
 	"github.com/funlake/gopkg/cache"
 	"strings"
 )
-
+const (
+	typeYaml = "yaml"
+	typeJson = "json"
+	typeToml = "toml"
+	typeProp = "prop"
+)
 // Watcher : Watching key & value change
 type Watcher interface {
 	KeepEyesOnKey(key string)

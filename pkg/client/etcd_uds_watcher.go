@@ -19,12 +19,7 @@ import (
 	"sync"
 )
 
-const (
-	typeYaml = "yaml"
-	typeJson = "json"
-	typeToml = "toml"
-	typeProp = "prop"
-)
+
 
 
 
