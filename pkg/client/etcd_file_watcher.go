@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"etcdcc/pkg/log"
+	"github.com/funlake/gopkg/cache"
 	"github.com/funlake/gopkg/jobworker"
 	"os"
 	"strings"
@@ -13,6 +14,7 @@ type EtcdFileWatcher struct {
 	RetrySeconds int
 	StoreDir     string
 	GeneralWatcher
+	Tc *cache.TimerCacheEtcd
 }
 
 //KeepEyesOnKey : Watching specific key
@@ -38,10 +40,10 @@ func (ecw *EtcdFileWatcher) setWorker(module string) {
 	}
 	go syncWorker.Retry()
 	//Initialize all configurations under mod
-	ecw.Init(module, func(k, v string) {
+	ecw.Init(ecw.Tc,module, func(k, v string) {
 		syncWorker.SyncOne(k, v)
 	})
-	ecw.Watch(module, func(k, v string) {
+	ecw.Watch(ecw.Tc,module, func(k, v string) {
 		syncWorker.SyncOne(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		//监听key == 删除key，则整个watch停止

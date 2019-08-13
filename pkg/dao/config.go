@@ -18,7 +18,7 @@ type CenterConfig struct {
 }
 
 //TableName : Return table's name in database
-func (cc *CenterConfig) TableName() string {
+func (*CenterConfig) TableName() string {
 	return "center_config"
 }
 

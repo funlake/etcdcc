@@ -28,7 +28,7 @@ var ServeCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		zerolog.SetGlobalLevel(zerolog.Level(logLevel))
 		log.Info("Listening on port:" + port)
-		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
+		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
 		mysql.Adapter.Connect(mysql.Adapter{})
 		log.Info("Successfully connected to mysql server")

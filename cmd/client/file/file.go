@@ -42,9 +42,9 @@ var FileCommand = &cobra.Command{
 	Use:   "client.file",
 	Short: "Listening config changes & modified local configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
+		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
-		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds, StoreDir: storeDir}
+		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds, StoreDir: storeDir,Tc:etcd.GetMetaCacheHandler()}
 		wc.KeepEyesOnKeyWithPrefix(prefix)
 	},
 }

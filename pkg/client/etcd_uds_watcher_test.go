@@ -120,7 +120,7 @@ func TestEtcdUdsWatcher_Find(t *testing.T) {
 			want: "a.etcchebao.com",
 		},
 	} {
-		val, err := watcher.find(ts.cmd)
+		val, err := watcher.Find(ts.cmd)
 		if err != nil {
 			t.Error(err.Error())
 		} else {
@@ -136,7 +136,7 @@ func BenchmarkEtcdUdsWatcher_Find(b *testing.B) {
 	b.SetParallelism(10)
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_, _ = watcher.find([]string{"get", "yaml/lake", "service.labels.aliyun\\.routing\\.port_80"})
+			_, _ = watcher.Find([]string{"get", "yaml/lake", "service.labels.aliyun\\.routing\\.port_80"})
 		}
 	})
 }

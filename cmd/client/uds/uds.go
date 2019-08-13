@@ -4,6 +4,7 @@ import (
 	"etcdcc/pkg/client"
 	"etcdcc/pkg/log"
 	"etcdcc/pkg/storage/adapter/etcd"
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"net/http"
 	//need import pprof for debugging
@@ -20,6 +21,7 @@ var (
 	retrySeconds   int
 	sockFile       string
 	withPprof      bool
+	loglevel 	   uint8
 )
 
 func init() {
@@ -33,6 +35,8 @@ func init() {
 	cp.StringVar(&etcdHosts, "hosts", "127.0.0.1:2379", "Hosts of etcd server")
 	cp.StringVar(&sockFile, "sock", "/run/etcdcc.sock", "Unix domain socket file")
 	cp.BoolVar(&withPprof, "pprof", false, "Open pprof debug")
+	cp.Uint8VarP(&loglevel, "loglevel", "l", 0, "Log level")
+
 
 	if cobra.MarkFlagRequired(cp, "prefix") != nil ||
 		cobra.MarkFlagRequired(cp, "hosts") != nil {
@@ -47,6 +51,7 @@ var UdsCommand = &cobra.Command{
 	Use:   "client.sock",
 	Short: "Listening config changes & server on unix domain socket",
 	Run: func(cmd *cobra.Command, args []string) {
+		zerolog.SetGlobalLevel(zerolog.Level(loglevel))
 		if withPprof {
 			go func() {
 				log.Info("Pprof server listening on 6060")
@@ -55,9 +60,9 @@ var UdsCommand = &cobra.Command{
 				}
 			}()
 		}
-		etcd.Adapter.Connect(etcd.Adapter{}, etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
+		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server[uds]")
-		wc := &client.EtcdUdsWatcher{}
+		wc := &client.EtcdUdsWatcher{Tc:etcd.GetMetaCacheHandler()}
 		go wc.ServeSocket(sockFile)
 		wc.KeepEyesOnKeyWithPrefix(prefix)
 	},

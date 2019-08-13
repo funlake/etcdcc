@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"errors"
 	"etcdcc/pkg/log"
+	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/funlake/gopkg/cache"
 	"github.com/ghodss/yaml"
 	"github.com/tidwall/gjson"
 	"github.com/zieckey/goini"
@@ -24,12 +26,13 @@ const (
 	typeProp = "prop"
 )
 
-var readBuffer = make([]byte, 1024)
+
 
 //EtcdUdsWatcher : Unix domain socket watcher for etcd
 type EtcdUdsWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
+	Tc *cache.TimerCacheEtcd
 }
 
 //KeepEyesOnKey : Watching specific key
@@ -37,10 +40,10 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKey(key string) {}
 
 //KeepEyesOnKeyWithPrefix : Watch etcd with prefix
 func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
-	euw.Init(prefix, func(k, v string) {
+	euw.Init(euw.Tc,prefix, func(k, v string) {
 		euw.saveLocal(k, v)
 	})
-	euw.Watch(prefix, func(k, v string) {
+	euw.Watch(euw.Tc,prefix, func(k, v string) {
 		euw.saveLocal(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		if mk == k {
@@ -52,10 +55,11 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 func (euw *EtcdUdsWatcher) saveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {
-		log.Error("Base64 decode error:" + err.Error())
+		log.Error(fmt.Sprintf("Base64 decode error with key %s : %s:" ,k,err.Error()))
 	} else {
 		//transform yaml/toml to json for easy handling
 		r, err = euw.jsonEncode(r, k)
+		log.Debug(fmt.Sprintf("saving data %s -> %s",k,string(r)))
 		euw.rawConfig.Store(k, string(r))
 	}
 }
@@ -114,7 +118,7 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 		}
 		switch strings.ToLower(cmd[0]) {
 		case "get":
-			val, err := euw.find(cmd)
+			val, err := euw.Find(cmd)
 			if err != nil {
 				_, err = fd.Write([]byte("fail," + err.Error()))
 			} else {
@@ -152,6 +156,7 @@ func (euw *EtcdUdsWatcher) handle(fd net.Conn) {
 	}
 }
 func (euw *EtcdUdsWatcher) getCmd(fd net.Conn) ([]string, error) {
+	readBuffer := make([]byte, 1024)
 	n, err := fd.Read(readBuffer)
 	if err != nil {
 		return []string{}, err
@@ -160,8 +165,9 @@ func (euw *EtcdUdsWatcher) getCmd(fd net.Conn) ([]string, error) {
 	cmd := strings.SplitN(msg, " ", 3)
 	return cmd, nil
 }
-func (euw *EtcdUdsWatcher) find(cmd []string) (string, error) {
+func (euw *EtcdUdsWatcher) Find(cmd []string) (string, error) {
 	r, ok := euw.rawConfig.Load(cmd[1])
+	log.Debug(fmt.Sprintf("%#v,%#v",cmd,r))
 	if ok {
 		if len(cmd) > 2 {
 			val := euw.getSpecifyKey(r.(string), cmd)

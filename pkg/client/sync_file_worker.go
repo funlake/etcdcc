@@ -22,7 +22,7 @@ type SyncFileWorker struct {
 	retrySeconds int
 	dispatcher   *jobworker.BlockingDispatcher
 	latestTime   sync.Map
-	failConfigs  sync.Map
+	failQueue    sync.Map
 }
 
 //RemoveOne : Remove one configuration setting
@@ -38,6 +38,7 @@ func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 //SyncOne : Sync one configuration setting
 func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 	ext, rk := getKeyAndExt(key.(string))
+	rk = strings.Replace(rk,"/","_",-1)
 	memoryFile := "/dev/shm/" + rk
 	in := sw.dispatcher.Put(jobworker.NewSimpleJob(func() {
 		//1.Read and write
@@ -68,7 +69,7 @@ func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 		}
 		if err != nil {
 			log.Error(err.Error())
-			sw.setFailConfig(key, value)
+			sw.pushToFailQueue(key, value)
 		}
 	}, func() string {
 		return "config_sync_job"
@@ -76,15 +77,15 @@ func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 		//never invoke..
 	}))
 	if !in {
-		sw.setFailConfig(key, value)
+		sw.pushToFailQueue(key, value)
 	}
 }
 func (sw *SyncFileWorker) setLatestTime(key string, t time.Time) {
 	sw.latestTime.Store(key, t)
 }
 
-func (sw *SyncFileWorker) setFailConfig(key, value interface{}) {
-	sw.failConfigs.Store(key, failConfig{
+func (sw *SyncFileWorker) pushToFailQueue(key, value interface{}) {
+	sw.failQueue.Store(key, failConfig{
 		t: time.Now(),
 		k: key,
 		v: value,
@@ -104,7 +105,7 @@ func (sw *SyncFileWorker) Retry() {
 	tm := timer.NewTimer()
 	tm.Ready()
 	tm.SetInterval(sw.retrySeconds, func() {
-		sw.failConfigs.Range(func(key, value interface{}) bool {
+		sw.failQueue.Range(func(key, value interface{}) bool {
 			if lt, ok := sw.latestTime.Load(key); ok {
 				vf := value.(failConfig)
 				if vf.t.After(lt.(time.Time)) {

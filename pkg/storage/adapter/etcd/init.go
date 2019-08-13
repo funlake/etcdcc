@@ -13,10 +13,10 @@ var (
 )
 
 //Adapter : Etcd adapter for dao layer
-type Adapter struct{}
+//type Adapter struct{}
 
 //Connect to etcd server
-func (e Adapter) Connect(hosts, c, k, ca, sn string) {
+func Connect(hosts, c, k, ca, sn string) {
 	adapterOnce.Do(func() {
 		tlsInfo := transport.TLSInfo{
 			CertFile:      c,
@@ -39,6 +39,6 @@ func (e Adapter) Connect(hosts, c, k, ca, sn string) {
 }
 
 //GetMetaCacheHandler : Export the cache instance
-func (e Adapter) GetMetaCacheHandler() *_cache.TimerCacheEtcd {
+func GetMetaCacheHandler() *_cache.TimerCacheEtcd {
 	return etcdCache
 }
