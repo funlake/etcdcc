@@ -1,4 +1,4 @@
-module etcdcc
+module github.com/funlake/etcdcc
 
 go 1.12
 

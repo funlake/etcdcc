@@ -3,8 +3,8 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"etcdcc/pkg/log"
 	"github.com/BurntSushi/toml"
+	"github.com/funlake/etcdcc/pkg/log"
 	"github.com/ghodss/yaml"
 	"net"
 	"os"

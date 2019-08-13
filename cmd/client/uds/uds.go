@@ -1,9 +1,9 @@
 package uds
 
 import (
-	"etcdcc/pkg/client"
-	"etcdcc/pkg/log"
-	"etcdcc/pkg/storage/adapter/etcd"
+	"github.com/funlake/etcdcc/pkg/client"
+	"github.com/funlake/etcdcc/pkg/log"
+	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"net/http"
@@ -21,7 +21,7 @@ var (
 	retrySeconds   int
 	sockFile       string
 	withPprof      bool
-	loglevel 	   uint8
+	loglevel       uint8
 )
 
 func init() {
@@ -36,7 +36,6 @@ func init() {
 	cp.StringVar(&sockFile, "sock", "/run/etcdcc.sock", "Unix domain socket file")
 	cp.BoolVar(&withPprof, "pprof", false, "Open pprof debug")
 	cp.Uint8VarP(&loglevel, "loglevel", "l", 0, "Log level")
-
 
 	if cobra.MarkFlagRequired(cp, "prefix") != nil ||
 		cobra.MarkFlagRequired(cp, "hosts") != nil {
@@ -62,7 +61,7 @@ var UdsCommand = &cobra.Command{
 		}
 		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server[uds]")
-		wch := &client.EtcdMemoryWatcher{Tc:etcd.GetMetaCacheHandler()}
+		wch := &client.EtcdMemoryWatcher{Tc: etcd.GetMetaCacheHandler()}
 		//go wc.ServeSocket(sockFile)
 		uc := &client.UnixSocket{
 			Wch: wch,
@@ -70,5 +69,4 @@ var UdsCommand = &cobra.Command{
 		go uc.Serve(sockFile)
 		wch.KeepEyesOnKeyWithPrefix(prefix)
 	},
-
 }

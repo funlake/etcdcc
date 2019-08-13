@@ -1,15 +1,14 @@
 package dao
 
 import (
-	"etcdcc/pkg/storage/adapter/etcd"
+	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
 	"testing"
 )
 
-var metaTestAdapter = etcd.Adapter{}
 var metaTestModel = MetaCache{}
 
 func initConnect() {
-	metaTestAdapter.Connect("https://127.0.0.1:2479", "/keys/client.pem", "/keys/client-key.pem", "/keys/ca.pem", "")
+	etcd.Connect("https://127.0.0.1:2479", "/keys/client.pem", "/keys/client-key.pem", "/keys/ca.pem", "")
 }
 
 //func TestEtcdService_Delete(t *testing.T) {

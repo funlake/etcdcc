@@ -1,9 +1,9 @@
 package file
 
 import (
-	"etcdcc/pkg/client"
-	"etcdcc/pkg/log"
-	"etcdcc/pkg/storage/adapter/etcd"
+	"github.com/funlake/etcdcc/pkg/client"
+	"github.com/funlake/etcdcc/pkg/log"
+	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +44,7 @@ var FileCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
-		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds, StoreDir: storeDir,Tc:etcd.GetMetaCacheHandler()}
+		wc := &client.EtcdFileWatcher{RetrySeconds: retrySeconds, StoreDir: storeDir, Tc: etcd.GetMetaCacheHandler()}
 		wc.KeepEyesOnKeyWithPrefix(prefix)
 	},
 }

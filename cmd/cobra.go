@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"etcdcc/cmd/client/file"
-	"etcdcc/cmd/client/uds"
-	"etcdcc/cmd/server"
 	"fmt"
+	"github.com/funlake/etcdcc/cmd/client/file"
+	"github.com/funlake/etcdcc/cmd/client/uds"
+	"github.com/funlake/etcdcc/cmd/server"
 	"github.com/spf13/cobra"
 	"os"
 )

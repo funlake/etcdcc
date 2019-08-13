@@ -1,10 +1,10 @@
 package mysql
 
 import (
-	"etcdcc/pkg/dao"
-	"etcdcc/pkg/log"
 	"fmt"
 	"github.com/astaxie/beego/orm"
+	"github.com/funlake/etcdcc/pkg/dao"
+	"github.com/funlake/etcdcc/pkg/log"
 	//beego need drive import here
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"

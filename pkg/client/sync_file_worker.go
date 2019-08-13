@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"encoding/base64"
-	"etcdcc/pkg/log"
 	"fmt"
+	"github.com/funlake/etcdcc/pkg/log"
 	"github.com/funlake/gopkg/jobworker"
 	"github.com/funlake/gopkg/timer"
 	"os"
@@ -38,7 +38,7 @@ func (sw *SyncFileWorker) RemoveOne(key interface{}) {
 //SyncOne : Sync one configuration setting
 func (sw *SyncFileWorker) SyncOne(key, value interface{}) {
 	ext, rk := getKeyAndExt(key.(string))
-	rk = strings.Replace(rk,"/","_",-1)
+	rk = strings.Replace(rk, "/", "_", -1)
 	memoryFile := "/dev/shm/" + rk
 	in := sw.dispatcher.Put(jobworker.NewSimpleJob(func() {
 		//1.Read and write

@@ -2,9 +2,8 @@ package dao
 
 import (
 	"errors"
-	"etcdcc/pkg/storage/adapter/etcd"
+	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
 )
-
 
 //MetaCache : Meta data storage
 type MetaCache struct{}

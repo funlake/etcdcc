@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"etcdcc/pkg/controllers"
 	"github.com/astaxie/beego"
+	"github.com/funlake/etcdcc/pkg/controllers"
 )
 
 func init() {

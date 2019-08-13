@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"etcdcc/pkg/log"
+	"github.com/funlake/etcdcc/pkg/log"
 	"github.com/funlake/gopkg/cache"
 	"github.com/funlake/gopkg/jobworker"
 	"os"
@@ -40,10 +40,10 @@ func (ecw *EtcdFileWatcher) setWorker(module string) {
 	}
 	go syncWorker.Retry()
 	//Initialize all configurations under mod
-	ecw.Init(ecw.Tc,module, func(k, v string) {
+	ecw.Init(ecw.Tc, module, func(k, v string) {
 		syncWorker.SyncOne(k, v)
 	})
-	ecw.Watch(ecw.Tc,module, func(k, v string) {
+	ecw.Watch(ecw.Tc, module, func(k, v string) {
 		syncWorker.SyncOne(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		//监听key == 删除key，则整个watch停止

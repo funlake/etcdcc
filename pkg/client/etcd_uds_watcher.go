@@ -6,9 +6,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"etcdcc/pkg/log"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/funlake/etcdcc/pkg/log"
 	"github.com/funlake/gopkg/cache"
 	"github.com/ghodss/yaml"
 	"github.com/tidwall/gjson"
@@ -19,15 +19,11 @@ import (
 	"sync"
 )
 
-
-
-
-
 //EtcdUdsWatcher : Unix domain socket watcher for etcd
 type EtcdUdsWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
-	Tc *cache.TimerCacheEtcd
+	Tc        *cache.TimerCacheEtcd
 }
 
 //KeepEyesOnKey : Watching specific key
@@ -35,10 +31,10 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKey(key string) {}
 
 //KeepEyesOnKeyWithPrefix : Watch etcd with prefix
 func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
-	euw.Init(euw.Tc,prefix, func(k, v string) {
+	euw.Init(euw.Tc, prefix, func(k, v string) {
 		euw.saveLocal(k, v)
 	})
-	euw.Watch(euw.Tc,prefix, func(k, v string) {
+	euw.Watch(euw.Tc, prefix, func(k, v string) {
 		euw.saveLocal(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		if mk == k {
@@ -50,11 +46,11 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 func (euw *EtcdUdsWatcher) saveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {
-		log.Error(fmt.Sprintf("Base64 decode error with key %s : %s:" ,k,err.Error()))
+		log.Error(fmt.Sprintf("Base64 decode error with key %s : %s:", k, err.Error()))
 	} else {
 		//transform yaml/toml to json for easy handling
 		r, err = euw.jsonEncode(r, k)
-		log.Debug(fmt.Sprintf("saving data %s -> %s",k,string(r)))
+		log.Debug(fmt.Sprintf("saving data %s -> %s", k, string(r)))
 		euw.rawConfig.Store(k, string(r))
 	}
 }
@@ -162,7 +158,7 @@ func (euw *EtcdUdsWatcher) getCmd(fd net.Conn) ([]string, error) {
 }
 func (euw *EtcdUdsWatcher) Find(cmd []string) (string, error) {
 	r, ok := euw.rawConfig.Load(cmd[1])
-	log.Debug(fmt.Sprintf("%#v,%#v",cmd,r))
+	log.Debug(fmt.Sprintf("%#v,%#v", cmd, r))
 	if ok {
 		if len(cmd) > 2 {
 			val := euw.getSpecifyKey(r.(string), cmd)

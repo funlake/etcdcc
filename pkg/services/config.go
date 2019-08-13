@@ -1,8 +1,8 @@
 package services
 
 import (
-	"etcdcc/pkg/dao"
-	"etcdcc/pkg/dto"
+	"github.com/funlake/etcdcc/pkg/dao"
+	"github.com/funlake/etcdcc/pkg/dto"
 )
 
 //Config struct

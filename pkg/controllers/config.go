@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"etcdcc/pkg/dao"
-	"etcdcc/pkg/dto"
-	"etcdcc/pkg/services"
+	"github.com/funlake/etcdcc/pkg/dao"
+	"github.com/funlake/etcdcc/pkg/dto"
+	"github.com/funlake/etcdcc/pkg/services"
 	"strconv"
 )
 

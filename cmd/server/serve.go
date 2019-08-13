@@ -1,12 +1,12 @@
 package server
 
 import (
-	"etcdcc/pkg/log"
-	//beego need import routes here
-	_ "etcdcc/pkg/routes"
-	"etcdcc/pkg/storage/adapter/etcd"
-	"etcdcc/pkg/storage/adapter/mysql"
 	"github.com/astaxie/beego"
+	"github.com/funlake/etcdcc/pkg/log"
+	//beego need import routes here
+	_ "github.com/funlake/etcdcc/pkg/routes"
+	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
+	"github.com/funlake/etcdcc/pkg/storage/adapter/mysql"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 )
