@@ -10,6 +10,9 @@ sudo: false
 install: true
 env:
   - GO111MODULE=on
+  - CODECOV_TOKEN="6fb71e51-7d3c-4d93-b7fb-dac958e81ed9"
 script:
-  - go test ./pkg/client/
+  - go test -race -coverprofile=coverage.txt -covermode=atomic ./pkg/client/
   - go build
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

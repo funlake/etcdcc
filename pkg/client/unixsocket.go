@@ -34,6 +34,7 @@ func (uxs *UnixSocket) Serve(sockFile string) {
 	}
 }
 func (uxs *UnixSocket) handle(fd net.Conn) {
+	defer fd.Close()
 	for {
 		cmd, err := uxs.getCmd(fd)
 		if err != nil {
