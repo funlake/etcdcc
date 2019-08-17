@@ -61,7 +61,7 @@ func (gw *GeneralWatcher) Watch(tc *cache.TimerCacheEtcd, key string, putCallbac
 	ctx, cancel := context.WithCancel(context.Background())
 	log.Info(fmt.Sprintf("Watching key with %s", key))
 	//Watching mod's configurations
-	for v := range tc.GetStore().Watch(ctx, key, clientv3.WithPrefix()) {
+	for v := range tc.GetStore().(*cache.KvStoreEtcd).Watch(ctx, key, clientv3.WithPrefix()) {
 		if v.Err() != nil {
 			continue
 		}

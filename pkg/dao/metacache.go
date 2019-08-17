@@ -3,6 +3,7 @@ package dao
 import (
 	"errors"
 	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
+	"github.com/funlake/gopkg/cache"
 )
 
 //MetaCache : Meta data storage
@@ -15,7 +16,7 @@ func (e MetaCache) Put(key, val string) (interface{}, error) {
 
 //Delete by key
 func (e MetaCache) Delete(key string) (interface{}, error) {
-	return etcd.GetMetaCacheHandler().GetStore().Delete(key)
+	return etcd.GetMetaCacheHandler().GetStore().(*cache.KvStoreEtcd).Delete(key)
 }
 
 //Get specific key
