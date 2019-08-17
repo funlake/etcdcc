@@ -53,3 +53,7 @@ func (ecw *EtcdFileWatcher) setWorker(module string) {
 		syncWorker.RemoveOne(k)
 	})
 }
+
+func (ecw *EtcdFileWatcher) Find(cmd []string) (string, error) {
+	return "", nil
+}

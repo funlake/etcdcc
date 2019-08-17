@@ -21,6 +21,7 @@ const (
 type Watcher interface {
 	KeepEyesOnKey(key string)
 	KeepEyesOnKeyWithPrefix(module string)
+	Find(cmd []string) (string, error)
 }
 
 //GeneralWatcher : base struct of watcher
