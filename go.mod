@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/astaxie/beego v1.11.1
 	github.com/coreos/etcd v3.3.13+incompatible
-	github.com/funlake/gopkg v0.1.2
+	github.com/funlake/gopkg v0.1.4
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
