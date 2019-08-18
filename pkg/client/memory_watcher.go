@@ -20,7 +20,7 @@ import (
 type MemoryWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
-	Tc        *cache.TimerCacheEtcd
+	Tc        cache.TimerCache
 }
 
 //KeepEyesOnKey : Watching specific key
@@ -28,10 +28,10 @@ func (emw *MemoryWatcher) KeepEyesOnKey(key string) {}
 
 //KeepEyesOnKeyWithPrefix : Watch etcd with prefix
 func (emw *MemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
-	emw.Init(emw.Tc, prefix, func(k, v string) {
+	emw.Init(emw.Tc.(*cache.TimerCacheEtcd), prefix, func(k, v string) {
 		emw.saveLocal(k, v)
 	})
-	emw.Watch(emw.Tc, prefix, func(k, v string) {
+	emw.Watch(emw.Tc.(*cache.TimerCacheEtcd), prefix, func(k, v string) {
 		emw.saveLocal(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		if mk == k {
