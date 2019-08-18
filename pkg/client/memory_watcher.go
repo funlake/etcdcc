@@ -29,10 +29,10 @@ func (emw *MemoryWatcher) KeepEyesOnKey(key string) {}
 //KeepEyesOnKeyWithPrefix : Watch etcd with prefix
 func (emw *MemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 	emw.Init(emw.Tc.(*cache.TimerCacheEtcd), prefix, func(k, v string) {
-		emw.saveLocal(k, v)
+		emw.SaveLocal(k, v)
 	})
 	emw.Watch(emw.Tc.(*cache.TimerCacheEtcd), prefix, func(k, v string) {
-		emw.saveLocal(k, v)
+		emw.SaveLocal(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		if mk == k {
 			cancel()
@@ -40,7 +40,7 @@ func (emw *MemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 		emw.rawConfig.Delete(k)
 	})
 }
-func (emw *MemoryWatcher) saveLocal(k, v string) {
+func (emw *MemoryWatcher) SaveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {
 		log.Error(fmt.Sprintf("Base64 decode error with key %s : %s:", k, err.Error()))

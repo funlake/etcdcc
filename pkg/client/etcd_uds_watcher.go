@@ -32,10 +32,10 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKey(key string) {}
 //KeepEyesOnKeyWithPrefix : Watch etcd with prefix
 func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 	euw.Init(euw.Tc, prefix, func(k, v string) {
-		euw.saveLocal(k, v)
+		euw.SaveLocal(k, v)
 	})
 	euw.Watch(euw.Tc, prefix, func(k, v string) {
-		euw.saveLocal(k, v)
+		euw.SaveLocal(k, v)
 	}, func(mk, k string, cancel context.CancelFunc) {
 		if mk == k {
 			cancel()
@@ -43,7 +43,7 @@ func (euw *EtcdUdsWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 		euw.rawConfig.Delete(k)
 	})
 }
-func (euw *EtcdUdsWatcher) saveLocal(k, v string) {
+func (euw *EtcdUdsWatcher) SaveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {
 		log.Error(fmt.Sprintf("Base64 decode error with key %s : %s:", k, err.Error()))

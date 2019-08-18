@@ -21,6 +21,7 @@ const (
 type Watcher interface {
 	KeepEyesOnKey(key string)
 	KeepEyesOnKeyWithPrefix(module string)
+	SaveLocal(k, v string)
 	Find(cmd []string) (string, error)
 }
 

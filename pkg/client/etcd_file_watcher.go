@@ -24,6 +24,9 @@ func (ecw *EtcdFileWatcher) KeepEyesOnKey(key string) {}
 func (ecw *EtcdFileWatcher) KeepEyesOnKeyWithPrefix(module string) {
 	ecw.setWorker(module)
 }
+func (ecw *EtcdFileWatcher) SaveLocal(k, v string) {
+	//
+}
 func (ecw *EtcdFileWatcher) setWorker(module string) {
 	storeDir := ecw.StoreDir + "/" + module
 	err := os.MkdirAll(storeDir, 0755)
