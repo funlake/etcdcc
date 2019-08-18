@@ -12,7 +12,7 @@ import (
 )
 
 type UnixSocket struct {
-	Wch *EtcdMemoryWatcher
+	Wch *MemoryWatcher
 }
 
 func (uxs *UnixSocket) Serve(sockFile string) {

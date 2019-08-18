@@ -17,17 +17,17 @@ import (
 )
 
 //EtcdUdsWatcher : Unix domain socket watcher for etcd
-type EtcdMemoryWatcher struct {
+type MemoryWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
 	Tc        *cache.TimerCacheEtcd
 }
 
 //KeepEyesOnKey : Watching specific key
-func (emw *EtcdMemoryWatcher) KeepEyesOnKey(key string) {}
+func (emw *MemoryWatcher) KeepEyesOnKey(key string) {}
 
 //KeepEyesOnKeyWithPrefix : Watch etcd with prefix
-func (emw *EtcdMemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
+func (emw *MemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 	emw.Init(emw.Tc, prefix, func(k, v string) {
 		emw.saveLocal(k, v)
 	})
@@ -40,7 +40,7 @@ func (emw *EtcdMemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 		emw.rawConfig.Delete(k)
 	})
 }
-func (emw *EtcdMemoryWatcher) saveLocal(k, v string) {
+func (emw *MemoryWatcher) saveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {
 		log.Error(fmt.Sprintf("Base64 decode error with key %s : %s:", k, err.Error()))
@@ -51,7 +51,7 @@ func (emw *EtcdMemoryWatcher) saveLocal(k, v string) {
 		emw.rawConfig.Store(k, string(r))
 	}
 }
-func (emw *EtcdMemoryWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
+func (emw *MemoryWatcher) jsonEncode(r []byte, prefix string) ([]byte, error) {
 	var (
 		err error
 	)
@@ -78,7 +78,7 @@ func (emw *EtcdMemoryWatcher) jsonEncode(r []byte, prefix string) ([]byte, error
 	}
 	return r, err
 }
-func (emw *EtcdMemoryWatcher) Find(cmd []string) (string, error) {
+func (emw *MemoryWatcher) Find(cmd []string) (string, error) {
 	r, ok := emw.rawConfig.Load(cmd[1])
 	log.Debug(fmt.Sprintf("%#v,%#v", cmd, r))
 	if ok {
@@ -93,7 +93,7 @@ func (emw *EtcdMemoryWatcher) Find(cmd []string) (string, error) {
 	}
 	return "", errors.New("NotFound")
 }
-func (emw *EtcdMemoryWatcher) getSpecifyKey(raw string, cmd []string) string {
+func (emw *MemoryWatcher) getSpecifyKey(raw string, cmd []string) string {
 	t := strings.SplitN(cmd[1], "/", 2)
 	switch t[0] {
 	case typeJson, typeToml, typeYaml:
