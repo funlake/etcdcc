@@ -51,7 +51,7 @@ func (gw *GeneralWatcher) Init(tc *cache.TimerCacheEtcd, prefix string, callback
 			callback(sk, string(e.Value))
 		}
 	} else {
-		log.Error(err.Error())
+		panic(err.Error())
 		return
 	}
 }
