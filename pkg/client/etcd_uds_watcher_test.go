@@ -44,45 +44,17 @@ hosts = [
 service:
   image: registry.cn/abcd
   restart: always
-  hostname: a.etcchebao.com
+  hostname: a.e.com
   expose:
     - 80/tcp
   environment:
-    - 'MYSQL_ETC1_MASTER_HOST=hosts.com'
-    - 'MYSQL_ETC1_PORT=3306'
-    - 'MYSQL_ETC1_USERNAME=etc'
-    - 'MYSQL_ETC1_PASSWORD=abcd'
-    - 'MYSQL_ETC1_SLAVE_HOST=hosts.com'
-    - 'MYSQL_ETC1_SLAVE2_HOST=hosts.com'
-    - 'MYSQL_ETC2_MASTER_HOST=hosts.com'
-    - 'MYSQL_ETC2_PORT=3306'
-    - 'MYSQL_ETC2_USERNAME=etc'
-    - 'MYSQL_ETC2_PASSWORD=abcd'
-    - 'MYSQL_ETC3_MASTER_HOST=hosts.com'
-    - 'MYSQL_ETC3_PORT=3306'
-    - 'MYSQL_ETC3_USERNAME=etc'
-    - 'MYSQL_ETC3_PASSWORD=abcd'
-    - 'MYSQL_UNITOLL_MASTER_HOST=hosts.com'
-    - 'MYSQL_UNITOLL_PORT=3306'
-    - 'MYSQL_UNITOLL_PASSWORD=abcd'
-    - 'MONGO_HOST=10.30.222.42'
-    - 'MONGO_USER=root'
-    - 'MONGO_PASSWD=hosts.com'
-    - 'MONGO_PORT=27017'
-    - 'MONGO_HOST2=hosts.com'
-    - 'MONGO_USER2=root'
-    - 'MONGO_PASSWD2=abcd'
-    - 'MONGO_PORT2=27017'
-    - 'REDIS_ETC1_HOST=hosts.com'
-    - 'REDIS_ETC1_PORT=6380'
-    - 'REDIS_ETC1_PASSWORD=asdf'
     - TZ=Asia/Shanghai
     - ENV=test
     - 'PHONE_DATA_DIR=/'
     - Run_Mode=pro
   labels:
     aliyun.scale: 1
-    aliyun.routing.port_80: a.etcchebao.com
+    aliyun.routing.port_80: a.e.com
 `)))
 }
 
@@ -117,7 +89,7 @@ func TestEtcdUdsWatcher_Find(t *testing.T) {
 		},
 		{
 			cmd:  []string{"get", "yaml/lake", "service.labels.aliyun\\.routing\\.port_80"},
-			want: "a.etcchebao.com",
+			want: "a.e.com",
 		},
 	} {
 		val, err := watcher.Find(ts.cmd)
