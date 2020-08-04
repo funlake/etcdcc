@@ -85,7 +85,7 @@ func TestEtcdUdsWatcher_Find(t *testing.T) {
 		},
 		{
 			cmd:  []string{"get", "yaml/lake", "service.environment.0"},
-			want: "MYSQL_ETC1_MASTER_HOST=hosts.com",
+			want: "kkk=hosts.com",
 		},
 		{
 			cmd:  []string{"get", "yaml/lake", "service.labels.aliyun\\.routing\\.port_80"},

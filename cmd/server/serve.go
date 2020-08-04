@@ -6,7 +6,6 @@ import (
 	//beego need import routes here
 	_ "github.com/funlake/etcdcc/pkg/routes"
 	"github.com/funlake/etcdcc/pkg/storage/adapter/etcd"
-	"github.com/funlake/etcdcc/pkg/storage/adapter/mysql"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 )
@@ -30,8 +29,8 @@ var ServeCommand = &cobra.Command{
 		log.Info("Listening on port:" + port)
 		etcd.Connect(etcdHosts, etcdCertFile, etcdKeyFile, etcdCaFile, etcdServerName)
 		log.Info("Successfully connected to etcd server")
-		mysql.Adapter.Connect(mysql.Adapter{})
-		log.Info("Successfully connected to mysql server")
+		//mysql.Adapter.Connect(mysql.Adapter{})
+		//log.Info("Successfully connected to mysql server")
 		beego.SetLevel(beego.LevelWarning)
 		beego.Run(":" + port)
 	},
@@ -45,7 +44,7 @@ func init() {
 	sp.StringVar(&etcdCaFile, "ca", "/keys/ca.pem", "Ca file for etcd connection")
 	sp.StringVar(&etcdServerName, "sn", "", "ServerName for ssl verification")
 	sp.StringVar(&etcdHosts, "hosts", "127.0.0.1:2379", "Hosts of etcd server")
-	sp.Uint8Var(&logLevel, "loglevel", 0, "log level")
+	sp.Uint8Var(&logLevel, "loglevel", 0, "Log level")
 	if cobra.MarkFlagRequired(sp, "hosts") != nil {
 		//cobra.MarkFlagRequired(sp, "k") != nil ||
 		//cobra.MarkFlagRequired(sp, "ca") != nil {

@@ -6,17 +6,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+	"sync"
+
 	"github.com/BurntSushi/toml"
 	"github.com/funlake/etcdcc/pkg/log"
 	"github.com/funlake/gopkg/cache"
 	"github.com/ghodss/yaml"
 	"github.com/tidwall/gjson"
 	"github.com/zieckey/goini"
-	"strings"
-	"sync"
 )
 
-//EtcdUdsWatcher : Unix domain socket watcher for etcd
+// MemoryWatcher watch config center and sync to local cache
 type MemoryWatcher struct {
 	GeneralWatcher
 	rawConfig sync.Map
@@ -40,6 +41,8 @@ func (emw *MemoryWatcher) KeepEyesOnKeyWithPrefix(prefix string) {
 		emw.rawConfig.Delete(k)
 	})
 }
+
+// SaveLocal save configuration into memory
 func (emw *MemoryWatcher) SaveLocal(k, v string) {
 	r, err := base64.StdEncoding.DecodeString(v)
 	if err != nil {

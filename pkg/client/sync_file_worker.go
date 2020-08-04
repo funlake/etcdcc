@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/funlake/etcdcc/pkg/log"
-	"github.com/funlake/gopkg/jobworker"
-	"github.com/funlake/gopkg/timer"
 	"os"
 	"os/exec"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/funlake/etcdcc/pkg/log"
+	"github.com/funlake/gopkg/jobworker"
+	"github.com/funlake/gopkg/timer"
 )
 
 //SyncFileWorker : Worker of sync configuration to file
